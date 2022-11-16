@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class EpicTask extends Task {
-    public ArrayList<Integer> subTasksIDs; // не могу сообразить, как будут выглядеть методы редактирования списка, так что пока паблик
+    public ArrayList<Long> subTasksIDs; // не могу сообразить, как будут выглядеть методы редактирования списка, так что пока паблик
 
-    public EpicTask(String name, String description, int ID, String status) {
+    public EpicTask(String name, String description, long ID, String status) {
         super(name, description, ID, status);
         subTasksIDs = new ArrayList<>();
         // Думаю, при создании эпика не будет возможности создать его с подзадачами.

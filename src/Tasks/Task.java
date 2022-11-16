@@ -6,14 +6,14 @@ public class Task {
     // Тут напрашивается ограничение доступа, хотя пока не могу сообразить, какие будут проверки
     private String name;
     private String description;
-    private int ID; // Счётчик countID в TaskManager. Интересно, мы его оставим как счётчик или потом заменим на hash
+    private long ID; // Счётчик countID в TaskManager. Интересно, мы его оставим как счётчик или потом заменим на hash
     private String status; // NEW, IN_PROGRESS, DONE
 
     public String getStatus() {
         return status;
     }
 
-    public Task(String name, String description, int ID, String status) {
+    public Task(String name, String description, long ID, String status) {
         this.name = name;
         this.description = description;
         this.ID = ID;
@@ -44,7 +44,7 @@ public class Task {
         this.description = description;
     }
 
-    public int getID() {
+    public long getID() {
         return ID;
     }
 

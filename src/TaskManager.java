@@ -9,42 +9,31 @@ public class TaskManager {
     // У этого класса, думаю, не будет геттеров-сеттеров, у него методы, использующие свои приватные поля
     private int countID; // does ++countID when new Task()
     // Во всех мапах Integer == ID задачи
-    private HashMap<Integer, Task> simpleTasks; // 0 in allTasks
-    private HashMap<Integer, EpicTask> epicTasks; // 1 in allTasks
-    private HashMap<Integer, SubTask> subTasks; // 2 in allTasks
-    private ArrayList<HashMap> allTasks; // raw - все мапы разные...
+    private HashMap<Long, Task> simpleTasks;
+    private HashMap<Long, EpicTask> epicTasks;
+    private HashMap<Long, SubTask> subTasks;
 
-    // Мне не хотелось это отправлять в конструктор, да и если у нас будет хранение и загрузка данных,
-    // то этот метод будет запускаться в случае отсутствия сохранения или очистки всей истории
-    public void generateTaskManager() {
+    // Конструктор так конструктор :)
+    public TaskManager() {
         countID = 0;
         simpleTasks = new HashMap<>();
         epicTasks = new HashMap<>();
         subTasks = new HashMap<>();
-        allTasks = new ArrayList<>();
-
-        allTasks.add(simpleTasks); // 0
-        allTasks.add(epicTasks); // 1
-        allTasks.add(subTasks); // 2
-    } // generateTaskManager
+    }
 
     public int generateID() {
         return ++countID;
     }
 
-    public ArrayList<HashMap> getAllTasks() {
-        return allTasks;
-    }
-
-    public HashMap<Integer, Task> getSimpleTasks() {
+    public HashMap<Long, Task> getSimpleTasks() {
         return simpleTasks;
     }
 
-    public HashMap<Integer, EpicTask> getEpicTasks() {
+    public HashMap<Long, EpicTask> getEpicTasks() {
         return epicTasks;
     }
 
-    public HashMap<Integer, SubTask> getSubTasks() {
+    public HashMap<Long, SubTask> getSubTasks() {
         return subTasks;
     }
 
@@ -60,7 +49,6 @@ public class TaskManager {
         }
     }
 
-    // Вот это вообще не понимаю. Может, хоть переделать на удаление сабтасков одного эпика, по ID эпика?..
     public void deleteAllSubTasks() {
         if(!subTasks.isEmpty()) {
             subTasks.clear();
@@ -71,7 +59,7 @@ public class TaskManager {
     }
 
     public void deleteSimpleTask(Task task) {
-        for (Integer i : simpleTasks.keySet()) {
+        for (Long i : simpleTasks.keySet()) {
             if (simpleTasks.get(i).getID() == task.getID()) {
                 simpleTasks.remove(i);
                 break;
@@ -97,14 +85,14 @@ public class TaskManager {
     } // deleteEpicTask
 
     public void deleteSubTask(SubTask subTask) {
-        int epicID = subTask.getEpicID();
+        long epicID = subTask.getEpicID();
         EpicTask parentEpic = epicTasks.get(epicID);
         subTasks.remove(subTask.getID()); // вот ладно бы этим дело ограничилось, но если это последняя незавершенная задача в эпике?
         if (parentEpic.subTasksIDs.isEmpty()) { // Если оказывается, что других подзадач с таким epicID не было
             epicTasks.get(epicID).setStatus("NEW"); // Если пустой эпик оставлять, то ему нужно поменять статус на "новый"
         }
         int finishedTasks = 0;
-        for (Integer taskID : parentEpic.subTasksIDs) {
+        for (Long taskID : parentEpic.subTasksIDs) {
             if (subTasks.get(taskID).getStatus().equals("DONE")) { finishedTasks++;}
         }
         if (finishedTasks != 0 && finishedTasks == parentEpic.subTasksIDs.size()) {
@@ -162,8 +150,7 @@ public class TaskManager {
         return result;
     }
 
-    // я сначала назвала create, но, если мы объект получаем, то какое тут создание...
-    public void recordSimpleTask (Task task) {
+    public long recordSimpleTask (Task task) {
         for (Task taskIterated : simpleTasks.values()) {
             if (taskIterated.equals(task)) {
                 System.out.println("Такая задача уже существует.");
@@ -171,9 +158,10 @@ public class TaskManager {
             }
         }
         simpleTasks.put(task.getID(), task);
+        return task.getID();
     } // recordSimpleTask
 
-    public void recordEpicTask (EpicTask epicTask) {
+    public long recordEpicTask (EpicTask epicTask) {
         for (EpicTask taskIterated : epicTasks.values()) {
             if (taskIterated.equals(epicTask)) {
                 System.out.println("Такая задача уже существует.");
@@ -181,9 +169,10 @@ public class TaskManager {
             }
         }
         epicTasks.put(epicTask.getID(), epicTask);
+        return epicTask.getID();
     } // recordEpicTask
 
-    public void recordSubTask (SubTask subTask) {
+    public long recordSubTask (SubTask subTask) {
         for (SubTask taskIterated : subTasks.values()) {
             if (taskIterated.equals(subTask)) {
                 System.out.println("Такая задача уже существует.");
@@ -197,6 +186,7 @@ public class TaskManager {
         // после проверок добавить задачу в общий список задач и в список подзадач эпика
         subTasks.put(subTask.getID(), subTask);
         epicTasks.get(subTask.getEpicID()).subTasksIDs.add(subTask.getID()); // Уже была проверка на дублирование задачи
+        return subTask.getID();
     } // recordSubTask
 
     // update записывает новый (переданный) объект на место старого, по ID \
@@ -218,10 +208,10 @@ public class TaskManager {
 
         // Если подзадача была завершена, нужно проверить, не последняя ли она в эпике, и если да, то и весь эпик пометить DONE
         if (subTask.getStatus().equals("DONE")) {
-            int epicID = subTask.getEpicID();
+            long epicID = subTask.getEpicID();
             EpicTask parentEpic = epicTasks.get(epicID);
             int finishedTasks = 0;
-            for (Integer taskID : parentEpic.subTasksIDs) {
+            for (Long taskID : parentEpic.subTasksIDs) {
                 if (subTasks.get(taskID).getStatus().equals("DONE")) { finishedTasks++;}
             }
             if (finishedTasks != 0 && finishedTasks == parentEpic.subTasksIDs.size()) {

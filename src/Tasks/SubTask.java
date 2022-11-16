@@ -3,14 +3,14 @@ package Tasks;
 import java.util.Objects;
 
 public class SubTask extends Task {
-    int epicID; // Какому эпику принадлежит
+    long epicID; // Какому эпику принадлежит
 
-    public SubTask(String name, String description, int ID, String status, int epicID) {
+    public SubTask(String name, String description, long ID, String status, long epicID) {
         super(name, description, ID, status);
         this.epicID = epicID;
     }
 
-    public int getEpicID() {
+    public long getEpicID() {
         return epicID;
     }
 
