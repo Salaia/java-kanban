@@ -1,4 +1,5 @@
 import Tasks.EpicTask;
+import Tasks.Status;
 import Tasks.SubTask;
 import Tasks.Task;
 
@@ -6,14 +7,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskManager {
-    // У этого класса, думаю, не будет геттеров-сеттеров, у него методы, использующие свои приватные поля
-    private int countID; // does ++countID when new Task()
-    // Во всех мапах Integer == ID задачи
-    private HashMap<Long, Task> simpleTasks;
-    private HashMap<Long, EpicTask> epicTasks;
-    private HashMap<Long, SubTask> subTasks;
+    private long countID; // does ++countID when new Task()
+    // Во всех мапах Long == ID задачи
+    private final HashMap<Long, Task> simpleTasks;
+    private final HashMap<Long, EpicTask> epicTasks;
+    private final HashMap<Long, SubTask> subTasks;
 
-    // Конструктор так конструктор :)
+    // Конструктор
     public TaskManager() {
         countID = 0;
         simpleTasks = new HashMap<>();
@@ -21,7 +21,7 @@ public class TaskManager {
         subTasks = new HashMap<>();
     }
 
-    public int generateID() {
+    public long generateID() {
         return ++countID;
     }
 
@@ -43,8 +43,10 @@ public class TaskManager {
         }
     }
 
+    // Добавила удаление сабтасок. Удалила все - ведь без всех эпиков сабтасок не будет тоже всех
     public void deleteAllEpicTasks() {
         if(!epicTasks.isEmpty()) {
+            subTasks.clear();
             epicTasks.clear();
         }
     }
@@ -53,24 +55,19 @@ public class TaskManager {
         if(!subTasks.isEmpty()) {
             subTasks.clear();
             for (EpicTask epic : epicTasks.values()) {
-                epic.setStatus("NEW"); // Без сабтасок эпики теперь пустые, и статус у них должен быть "новый"
+                epic.setStatus(Status.NEW); // Без сабтасок эпики теперь пустые, и статус у них должен быть "новый"
             }
         }
     }
 
-    public void deleteSimpleTask(Task task) {
-        for (Long i : simpleTasks.keySet()) {
-            if (simpleTasks.get(i).getID() == task.getID()) {
-                simpleTasks.remove(i);
-                break;
-            }
-        }
+    public void deleteSimpleTask(long ID) {
+        simpleTasks.remove(ID);
     } // deleteSimpleTask
 
-    public void deleteEpicTask(EpicTask epicTask) {
+    public void deleteEpicTask(long ID) {
         ArrayList<SubTask> subTasksOfEpic = new ArrayList<>(); // удалили эпик - надо удалить вложенные подзадачи
         for (SubTask subTask : subTasks.values()) {
-            if (subTask.getEpicID() == epicTask.getID()) {
+            if (subTask.getEpicID() == ID) {
                 subTasksOfEpic.add(subTask);
             }
         }
@@ -81,26 +78,16 @@ public class TaskManager {
                 }
             }
         }
-        epicTasks.remove(epicTask.getID());
+        epicTasks.remove(ID);
     } // deleteEpicTask
 
-    public void deleteSubTask(SubTask subTask) {
-        long epicID = subTask.getEpicID();
-        EpicTask parentEpic = epicTasks.get(epicID);
-        subTasks.remove(subTask.getID()); // вот ладно бы этим дело ограничилось, но если это последняя незавершенная задача в эпике?
-        if (parentEpic.subTasksIDs.isEmpty()) { // Если оказывается, что других подзадач с таким epicID не было
-            epicTasks.get(epicID).setStatus("NEW"); // Если пустой эпик оставлять, то ему нужно поменять статус на "новый"
-        }
-        int finishedTasks = 0;
-        for (Long taskID : parentEpic.subTasksIDs) {
-            if (subTasks.get(taskID).getStatus().equals("DONE")) { finishedTasks++;}
-        }
-        if (finishedTasks != 0 && finishedTasks == parentEpic.subTasksIDs.size()) {
-            epicTasks.get(epicID).setStatus("DONE");
-        }
+    public void deleteSubTask(long ID) {
+        long epicID = subTasks.get(ID).getEpicID();
+        subTasks.remove(ID);
+        updateEpicStatus(epicID);
     }
 
-    public Task getSimpleTaskByIDorNull(int ID) { // вызывать через if (!=null) !!!
+    public Task getSimpleTaskByIDorNull(long ID) { // вызывать через if (!=null) !!!
         Task result = null;
             for (Task task : simpleTasks.values()) {
                 if (task.getID() == ID) {
@@ -113,7 +100,7 @@ public class TaskManager {
         return result;
     } // getSimpleTaskByIDorNull
 
-    public EpicTask getEpicTaskByIDorNull(int ID) { // вызывать через if (!=null) !!!
+    public EpicTask getEpicTaskByIDorNull(long ID) { // вызывать через if (!=null) !!!
         EpicTask result = null;
         for (EpicTask epic : epicTasks.values()) {
             if (epic.getID() == ID) {
@@ -126,7 +113,7 @@ public class TaskManager {
         return result;
     } // getEpicTaskByIDorNull
 
-    public SubTask getSubTaskByIDorNull(int ID) { // вызывать через if (!=null) !!!
+    public SubTask getSubTaskByIDorNull(long ID) { // вызывать через if (!=null) !!!
         SubTask result = null;
         for (SubTask subTask : subTasks.values()) {
             if (subTask.getID() == ID) {
@@ -139,15 +126,16 @@ public class TaskManager {
         return result;
     } // getSubTaskByIDorNull
 
-    // В ТЗ не сказано, получение по ID эпика или по объекту, я сделала ID
-    public ArrayList<SubTask> getAllSubTasksOfEpicOrNull (int epicID) {  // вызывать через if (!=null) !!!
-        ArrayList<SubTask> result = new ArrayList<>();
-        for (SubTask task : subTasks.values()) {
-            if (task.getID() == epicID) {
-                result.add(task);
+    public ArrayList<SubTask> getAllSubTasksOfEpicOrNull (long epicID) {  // вызывать через if (!=null) !!!
+        ArrayList<SubTask> subsOfThisEpic = new ArrayList<>();
+        for (SubTask subTask : subTasks.values()) {
+            for (Long epicSubsID : epicTasks.get(epicID).subTasksIDs) {
+                if (epicSubsID == subTask.getID()) {
+                    subsOfThisEpic.add(subTask);
+                }
             }
         }
-        return result;
+        return subsOfThisEpic;
     }
 
     public long recordSimpleTask (Task task) {
@@ -157,6 +145,8 @@ public class TaskManager {
                 break;
             }
         }
+        task.setID(generateID());
+        task.setStatus(Status.NEW);
         simpleTasks.put(task.getID(), task);
         return task.getID();
     } // recordSimpleTask
@@ -168,11 +158,15 @@ public class TaskManager {
                 break;
             }
         }
+        epicTask.setID(generateID());
+        epicTask.setStatus(Status.NEW);
         epicTasks.put(epicTask.getID(), epicTask);
         return epicTask.getID();
     } // recordEpicTask
 
     public long recordSubTask (SubTask subTask) {
+        subTask.setID(generateID());
+        subTask.setStatus(Status.NEW);
         for (SubTask taskIterated : subTasks.values()) {
             if (taskIterated.equals(subTask)) {
                 System.out.println("Такая задача уже существует.");
@@ -186,40 +180,71 @@ public class TaskManager {
         // после проверок добавить задачу в общий список задач и в список подзадач эпика
         subTasks.put(subTask.getID(), subTask);
         epicTasks.get(subTask.getEpicID()).subTasksIDs.add(subTask.getID()); // Уже была проверка на дублирование задачи
-        return subTask.getID();
-    } // recordSubTask
-
-    // update записывает новый (переданный) объект на место старого, по ID \
-    // Если такого ID не было, значит, запишет новый (хотя из корректного GUI такой ситуации возникнуть не должно)
-    public void updateSimpleTask(Task task) {
-        simpleTasks.put(task.getID(), task);
-    } // updateSimpleTask
-
-    public void updateEpicTask(EpicTask epicTask) {
-        epicTasks.put(epicTask.getID(), epicTask);
-    } // updateEpicTask
-
-    public void updateSubTask(SubTask subTask) {
-        subTasks.put(subTask.getID(), subTask);
-
-        if (subTask.getStatus().equals("IN_PROGRESS")) {
-            epicTasks.get(subTask.getEpicID()).setStatus("IN_PROGRESS"); // даже если был он же, ну пусть перезапишется
-        }
 
         // Если подзадача была завершена, нужно проверить, не последняя ли она в эпике, и если да, то и весь эпик пометить DONE
-        if (subTask.getStatus().equals("DONE")) {
+        if (subTask.getStatus().equals(Status.DONE)) {
             long epicID = subTask.getEpicID();
             EpicTask parentEpic = epicTasks.get(epicID);
             int finishedTasks = 0;
             for (Long taskID : parentEpic.subTasksIDs) {
-                if (subTasks.get(taskID).getStatus().equals("DONE")) { finishedTasks++;}
+                if (subTasks.get(taskID).getStatus().equals(Status.DONE)) { finishedTasks++;}
             }
             if (finishedTasks != 0 && finishedTasks == parentEpic.subTasksIDs.size()) {
-                epicTasks.get(epicID).setStatus("DONE");
+                epicTasks.get(epicID).setStatus(Status.DONE);
             } else {
-                epicTasks.get(epicID).setStatus("IN_PROGRESS");
+                epicTasks.get(epicID).setStatus(Status.IN_PROGRESS);
             }
         }
+
+        return subTask.getID();
+    } // recordSubTask
+
+    // update записывает новый (переданный) объект на место старого, по ID
+    public void updateSimpleTask(Task task, long ID, Status status) {
+        task.setStatus(status);
+        task.setID(ID);
+        simpleTasks.put(ID, task);
+    } // updateSimpleTask
+
+    public void updateEpicTask(EpicTask epicTask, long ID) {
+        epicTask.setID(ID);
+        epicTask.setStatus(epicTasks.get(ID).getStatus());
+        epicTasks.replace(ID, epicTask);
+    } // updateEpicTask
+
+    public void updateSubTask(SubTask subTask, long ID, Status status) {
+        subTask.setStatus(status);
+        subTask.setID(ID);
+        subTasks.replace(ID, subTask);
+        updateEpicStatus(subTask.getEpicID());
     } // updateSubTask
+
+    // Мне показалось, что операция достаточно объёмная, и пусть она будет отдельным методом
+    private void updateEpicStatus(long epicID) {
+        EpicTask epicTask = epicTasks.get(epicID);
+        int doneTasks = 0;
+        int newTasks = 0;
+        int progressTasks = 0; // never accessed 'cause it's in "else"
+        ArrayList<SubTask> subsOfThisEpic = getAllSubTasksOfEpicOrNull(epicID);
+
+        for (SubTask subTask : subsOfThisEpic) {
+            switch (subTask.getStatus()) {
+                case DONE:
+                    doneTasks++;
+                case NEW:
+                    newTasks++;
+                case IN_PROGRESS:
+                    progressTasks++;
+            }
+        } // на выходе должно быть посчитано, сколько сабтасок с каким статусом в эпике
+
+        if (doneTasks == subsOfThisEpic.size()) {
+            epicTask.setStatus(Status.DONE);
+        } else if (newTasks == subsOfThisEpic.size() || subsOfThisEpic.size() == 0) {
+            epicTask.setStatus(Status.NEW);
+        } else {
+            epicTask.setStatus(Status.IN_PROGRESS);
+        }
+    } // updateEpicStatus
 
 } // TaskManager
