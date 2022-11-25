@@ -131,6 +131,8 @@ class TaskManagerTest {
         Assertions.assertEquals(3, taskManager.getSimpleTasks().size());
         taskManager.deleteSimpleTask(task1ID);
         Assertions.assertEquals(2, taskManager.getSimpleTasks().size());
+        Assertions.assertNull(taskManager.getSimpleTaskByIDorNull(task1ID));
+        Assertions.assertNotNull(taskManager.getSimpleTaskByIDorNull(task2ID));
     }
 
     @Test
@@ -144,8 +146,14 @@ class TaskManagerTest {
         long subTask1InEpic2 = taskManager.recordSubTask(new SubTask("SubTask1 in epic2", "some description", epic2ID));
 
         taskManager.deleteEpicTask(epic2ID);
-        Assertions.assertEquals(1, taskManager.getEpicTasks().size());
-        Assertions.assertEquals(2, taskManager.getSubTasks().size());
+        Assertions.assertEquals(1, taskManager.getEpicTasks().size()); // проверять длину мапы -
+        Assertions.assertEquals(2, taskManager.getSubTasks().size()); // моя изначальная идея
+
+        // от Виталия
+        Assertions.assertNull(taskManager.getSubTaskByIDorNull(subTask1InEpic2)); // Subtask этого эпика действительно удалена
+        Assertions.assertNotNull(taskManager.getSubTaskByIDorNull(subTask1InEpic1)); // чужая сабтаска была не тронута
+        Assertions.assertNull(taskManager.getEpicTaskByIDorNull(epic2ID)); // epic2 deleted
+        Assertions.assertNotNull(taskManager.getEpicTaskByIDorNull(epic1ID)); // epic1 still here
     }
 
     // В эпике 2 задачи, NEW и IN_PROGRESS, удаляем IN_PROGRESS, эпик должен стать NEW

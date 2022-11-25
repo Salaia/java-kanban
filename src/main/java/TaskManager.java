@@ -65,19 +65,12 @@ public class TaskManager {
     } // deleteSimpleTask
 
     public void deleteEpicTask(long ID) {
-        ArrayList<SubTask> subTasksOfEpic = new ArrayList<>(); // удалили эпик - надо удалить вложенные подзадачи
+        // убрала алгоритм квадратичной сложности :)
         for (SubTask subTask : subTasks.values()) {
             if (subTask.getEpicID() == ID) {
-                subTasksOfEpic.add(subTask);
+                subTasks.remove(subTask.getID());
             }
-        }
-        for (SubTask subTaskToDelete : subTasks.values()) {
-            for (SubTask subTaskOfEpic : subTasksOfEpic) {
-                if (subTaskOfEpic.equals(subTaskToDelete)) {
-                    subTasks.remove(subTaskToDelete.getID());
-                }
-            }
-        }
+        }    epicTasks.remove(ID);
         epicTasks.remove(ID);
     } // deleteEpicTask
 
