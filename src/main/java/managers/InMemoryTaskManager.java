@@ -1,20 +1,23 @@
-import Tasks.EpicTask;
-import Tasks.Status;
-import Tasks.SubTask;
-import Tasks.Task;
+package managers;
+
+import tasks.EpicTask;
+import tasks.Status;
+import tasks.SubTask;
+import tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     private long countID; // does ++countID when new Task()
     // Во всех мапах Long == ID задачи
     private final HashMap<Long, Task> simpleTasks;
     private final HashMap<Long, EpicTask> epicTasks;
     private final HashMap<Long, SubTask> subTasks;
+    InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
     // Конструктор
-    public TaskManager() {
+    public InMemoryTaskManager() {
         countID = 0;
         simpleTasks = new HashMap<>();
         epicTasks = new HashMap<>();
@@ -81,42 +84,33 @@ public class TaskManager {
     }
 
     public Task getSimpleTaskByIDorNull(long ID) { // вызывать через if (!=null) !!!
-        Task result = null;
-            for (Task task : simpleTasks.values()) {
-                if (task.getID() == ID) {
-                    result = task;
-                }
-            }
-        if (result == null) {
+        if (!simpleTasks.containsKey(ID)) {
             System.out.println("ID not found");
+            return null;
+        } else {
+            inMemoryHistoryManager.add(simpleTasks.get(ID));
+            return simpleTasks.get(ID);
         }
-        return result;
     } // getSimpleTaskByIDorNull
 
     public EpicTask getEpicTaskByIDorNull(long ID) { // вызывать через if (!=null) !!!
-        EpicTask result = null;
-        for (EpicTask epic : epicTasks.values()) {
-            if (epic.getID() == ID) {
-                result = epic;
-            }
-        }
-        if (result == null) {
+        if(!epicTasks.containsKey(ID)) {
             System.out.println("ID not found");
+            return null;
+        } else {
+            inMemoryHistoryManager.add(epicTasks.get(ID));
+            return epicTasks.get(ID);
         }
-        return result;
     } // getEpicTaskByIDorNull
 
     public SubTask getSubTaskByIDorNull(long ID) { // вызывать через if (!=null) !!!
-        SubTask result = null;
-        for (SubTask subTask : subTasks.values()) {
-            if (subTask.getID() == ID) {
-                result = subTask;
-            }
-        }
-        if (result == null) {
+        if (!subTasks.containsKey(ID)) {
             System.out.println("ID не найдено");
+            return null;
+        } else {
+            inMemoryHistoryManager.add(subTasks.get(ID));
+            return subTasks.get(ID);
         }
-        return result;
     } // getSubTaskByIDorNull
 
     public ArrayList<SubTask> getAllSubTasksOfEpicOrNull (long epicID) {  // вызывать через if (!=null) !!!

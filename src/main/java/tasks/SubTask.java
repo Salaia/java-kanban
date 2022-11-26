@@ -1,4 +1,4 @@
-package Tasks;
+package tasks;
 
 public class SubTask extends Task {
     long epicID; // Какому эпику принадлежит
