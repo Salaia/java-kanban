@@ -1,4 +1,4 @@
-package managers;
+        package managers;
 
 import tasks.EpicTask;
 import tasks.Status;
@@ -14,7 +14,12 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Long, Task> simpleTasks;
     private final HashMap<Long, EpicTask> epicTasks;
     private final HashMap<Long, SubTask> subTasks;
-    InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
+
+    public HistoryManager getInMemoryHistoryManager() {
+        return inMemoryHistoryManager;
+    }
+
+    private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
     // Конструктор
     public InMemoryTaskManager() {
@@ -40,6 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
         return subTasks;
     }
 
+    @Override
     public void deleteAllSimpleTasks() {
         if(!simpleTasks.isEmpty()) {
             simpleTasks.clear();
@@ -47,6 +53,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     // Добавила удаление сабтасок. Удалила все - ведь без всех эпиков сабтасок не будет тоже всех
+    @Override
     public void deleteAllEpicTasks() {
         if(!epicTasks.isEmpty()) {
             subTasks.clear();
@@ -54,7 +61,8 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public void deleteAllSubTasks() {
+
+    @Override public void deleteAllSubTasks() {
         if(!subTasks.isEmpty()) {
             subTasks.clear();
             for (EpicTask epic : epicTasks.values()) {
@@ -63,12 +71,14 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    @Override
     public void deleteSimpleTask(long ID) {
         simpleTasks.remove(ID);
     } // deleteSimpleTask
 
+    @Override
     public void deleteEpicTask(long ID) {
-        // убрала алгоритм квадратичной сложности :)
+        // убрала алгоритм квадратичной сложности 🙂
         for (SubTask subTask : subTasks.values()) {
             if (subTask.getEpicID() == ID) {
                 subTasks.remove(subTask.getID());
@@ -77,12 +87,14 @@ public class InMemoryTaskManager implements TaskManager {
         epicTasks.remove(ID);
     } // deleteEpicTask
 
+    @Override
     public void deleteSubTask(long ID) {
         long epicID = subTasks.get(ID).getEpicID();
         subTasks.remove(ID);
         updateEpicStatus(epicID);
     }
 
+    @Override
     public Task getSimpleTaskByIDorNull(long ID) { // вызывать через if (!=null) !!!
         if (!simpleTasks.containsKey(ID)) {
             System.out.println("ID not found");
@@ -93,6 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     } // getSimpleTaskByIDorNull
 
+    @Override
     public EpicTask getEpicTaskByIDorNull(long ID) { // вызывать через if (!=null) !!!
         if(!epicTasks.containsKey(ID)) {
             System.out.println("ID not found");
@@ -103,6 +116,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     } // getEpicTaskByIDorNull
 
+    @Override
     public SubTask getSubTaskByIDorNull(long ID) { // вызывать через if (!=null) !!!
         if (!subTasks.containsKey(ID)) {
             System.out.println("ID не найдено");
@@ -113,6 +127,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     } // getSubTaskByIDorNull
 
+    @Override
     public ArrayList<SubTask> getAllSubTasksOfEpicOrNull (long epicID) {  // вызывать через if (!=null) !!!
         ArrayList<SubTask> subsOfThisEpic = new ArrayList<>();
         for (SubTask subTask : subTasks.values()) {
@@ -125,6 +140,7 @@ public class InMemoryTaskManager implements TaskManager {
         return subsOfThisEpic;
     }
 
+    @Override
     public long recordSimpleTask (Task task) {
         for (Task taskIterated : simpleTasks.values()) {
             if (taskIterated.equals(task)) {
@@ -138,6 +154,7 @@ public class InMemoryTaskManager implements TaskManager {
         return task.getID();
     } // recordSimpleTask
 
+    @Override
     public long recordEpicTask (EpicTask epicTask) {
         for (EpicTask taskIterated : epicTasks.values()) {
             if (taskIterated.equals(epicTask)) {
@@ -151,6 +168,7 @@ public class InMemoryTaskManager implements TaskManager {
         return epicTask.getID();
     } // recordEpicTask
 
+    @Override
     public long recordSubTask (SubTask subTask) {
         subTask.setID(generateID());
         subTask.setStatus(Status.NEW);
@@ -187,18 +205,21 @@ public class InMemoryTaskManager implements TaskManager {
     } // recordSubTask
 
     // update записывает новый (переданный) объект на место старого, по ID
+    @Override
     public void updateSimpleTask(Task task, long ID, Status status) {
         task.setStatus(status);
         task.setID(ID);
         simpleTasks.put(ID, task);
     } // updateSimpleTask
 
+    @Override
     public void updateEpicTask(EpicTask epicTask, long ID) {
         epicTask.setID(ID);
         epicTask.setStatus(epicTasks.get(ID).getStatus());
         epicTasks.replace(ID, epicTask);
     } // updateEpicTask
 
+    @Override
     public void updateSubTask(SubTask subTask, long ID, Status status) {
         subTask.setStatus(status);
         subTask.setID(ID);
@@ -221,6 +242,7 @@ public class InMemoryTaskManager implements TaskManager {
                 case NEW:
                     newTasks++;
                 case IN_PROGRESS:
+
                     progressTasks++;
             }
         } // на выходе должно быть посчитано, сколько сабтасок с каким статусом в эпике
