@@ -7,7 +7,7 @@ import tasks.SubTask;
 import tasks.Task;
 
 class InMemoryHistoryManagerTest {
-    static TaskManager taskManager = new InMemoryTaskManager();
+    static TaskManager taskManager = Managers.getDefault();
 
     @Test
     void getHistory() {

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
 class InMemoryTaskManagerTest {
-    TaskManager taskManager = new InMemoryTaskManager();
+    TaskManager taskManager = Managers.getDefault();
 
     @Test
     void createSimpleTask() {
