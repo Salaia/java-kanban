@@ -4,9 +4,8 @@ public class Task {
     private String name;
     private String description;
 
-
-    private long ID; // Счётчик countID в TaskManager. Интересно, мы его оставим как счётчик или потом заменим на hash
-    private Status status; // теперь Enum
+    private Long ID; // Счётчик countID в TaskManager. Интересно, мы его оставим как счётчик или потом заменим на hash
+    private Status status;
 
     public Status getStatus() {
         return status;
@@ -18,15 +17,13 @@ public class Task {
         this.description = description;
     }
 
-    public void setID(long ID) {
+    public void setID(Long ID) {
         this.ID = ID;
     }
-
 
     public void setStatus(Status status) {
         this.status = status;
     } // setStatus
-
 
     public String getName() {
         return name;
@@ -36,7 +33,15 @@ public class Task {
         return description;
     }
 
-    public long getID() {
+    public Long getID() {
         return ID;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

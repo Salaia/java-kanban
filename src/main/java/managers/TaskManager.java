@@ -1,33 +1,50 @@
 package managers;
 
 import tasks.EpicTask;
-import tasks.Status;
 import tasks.SubTask;
 import tasks.Task;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public interface TaskManager {
-    public long generateID();
-    public HashMap<Long, Task> getSimpleTasks();
-    public HashMap<Long, EpicTask> getEpicTasks();
-    public HashMap<Long, SubTask> getSubTasks();
-    public void deleteAllSimpleTasks();
-    public void deleteAllEpicTasks();
-    public void deleteAllSubTasks();
-    public void deleteSimpleTask(long ID);
-    public void deleteEpicTask(long ID);
-    public void deleteSubTask(long ID);
-    public Task getSimpleTaskByIDorNull(long ID);
-    public EpicTask getEpicTaskByIDorNull(long ID);
-    public SubTask getSubTaskByIDorNull(long ID);
-    public ArrayList<SubTask> getAllSubTasksOfEpicOrNull (long epicID);
-    public long recordSimpleTask (Task task);
-    public long recordEpicTask (EpicTask epicTask);
-    public long recordSubTask (SubTask subTask);
-    public void updateSimpleTask(Task task, long ID, Status status);
-    public void updateEpicTask(EpicTask epicTask, long ID);
-    public void updateSubTask(SubTask subTask, long ID, Status status);
+
+    ArrayList<Task> getHistory();
+    ArrayList<Task> getSimpleTasks();
+
+    ArrayList<EpicTask> getEpicTasks();
+
+    ArrayList<SubTask> getSubTasks();
+
+    void deleteAllSimpleTasks();
+
+    void deleteAllEpicTasks();
+
+    void deleteAllSubTasks();
+
+    void deleteSimpleTask(Long ID);
+
+    void deleteEpicTask(Long ID);
+
+    void deleteSubTask(Long ID);
+
+    Task getSimpleTaskByIDorNull(Long ID);
+
+    EpicTask getEpicTaskByIDorNull(Long ID);
+
+    SubTask getSubTaskByIDorNull(Long ID);
+
+    ArrayList<SubTask> getAllSubTasksOfEpicOrNull(Long epicID);
+
+    Long recordSimpleTask(Task task);
+
+    Long recordEpicTask(EpicTask epicTask);
+
+    Long recordSubTask(SubTask subTask);
+
+    void updateSimpleTask(Task task);
+
+    void updateEpicTask(EpicTask epicTask);
+
+    void updateSubTask(SubTask subTask);
 
 } // TaskManager

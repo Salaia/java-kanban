@@ -1,6 +1,6 @@
-import managers.InMemoryTaskManager;
+import managers.Managers;
+import managers.TaskManager;
 import tasks.EpicTask;
-import tasks.Status;
 import tasks.SubTask;
 import tasks.Task;
 
@@ -9,33 +9,31 @@ import java.util.HashMap;
 public class Main {
 
     public static void main(String[] args) {
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
-        runMainTesting(inMemoryTaskManager);
+        TaskManager taskManager = Managers.getDefault();
+        runMainTesting(taskManager);
     }
 
     //  Перенесла из класса по тестированию на случай, если платформе ЯП он нужен для тестов
-    public static void runMainTesting(InMemoryTaskManager inMemoryTaskManager) {
-        long taskID = inMemoryTaskManager.recordSimpleTask(new Task("SimpleTaskName", "SimpleTaskDescription"));
+    public static void runMainTesting(TaskManager taskManager) {
+        Long taskID = taskManager.recordSimpleTask(new Task("SimpleTaskName", "SimpleTaskDescription"));
         // один эпик с 2 подзадачами
-        long epic1ID = inMemoryTaskManager.recordEpicTask(new EpicTask("EpicName1", "Epic1descr"));
-        long subTask1InEpic1 = inMemoryTaskManager.recordSubTask(new SubTask("SubTask1 in epic1", "some description", epic1ID));
-        long subTask2InEpic1 = inMemoryTaskManager.recordSubTask(new SubTask("SubTask2 in epic1", "some description", epic1ID));
+        Long epic1ID = taskManager.recordEpicTask(new EpicTask("EpicName1", "Epic1descr"));
+        Long subTask1InEpic1 = taskManager.recordSubTask(new SubTask("SubTask1 in epic1", "some description", epic1ID));
+        Long subTask2InEpic1 = taskManager.recordSubTask(new SubTask("SubTask2 in epic1", "some description", epic1ID));
         // другой эпик с 1 подзадачей
-        long epic2ID = inMemoryTaskManager.recordEpicTask(new EpicTask("EpicName2", "Epic2descr"));
-        long subTask1InEpic2 = inMemoryTaskManager.recordSubTask(new SubTask("SubTask1 in epic2", "some description", epic2ID));
+        Long epic2ID = taskManager.recordEpicTask(new EpicTask("EpicName2", "Epic2descr"));
+        Long subTask1InEpic2 = taskManager.recordSubTask(new SubTask("SubTask1 in epic2", "some description", epic2ID));
 
-        //Assertions.assertEquals(0, inMemoryTaskManager.inMemoryHistoryManager.getHistory().size());
-        inMemoryTaskManager.getSimpleTaskByIDorNull(taskID);
-        System.out.println(inMemoryTaskManager.getInMemoryHistoryManager().getHistory());
-        inMemoryTaskManager.getEpicTaskByIDorNull(epic1ID);
-        System.out.println(inMemoryTaskManager.getInMemoryHistoryManager().getHistory());
-        inMemoryTaskManager.getSubTaskByIDorNull(subTask1InEpic2);
-        System.out.println(inMemoryTaskManager.getInMemoryHistoryManager().getHistory());
+        taskManager.getSimpleTaskByIDorNull(taskID);
+        System.out.println(taskManager.getHistory());
+        taskManager.getEpicTaskByIDorNull(epic1ID);
+        System.out.println(taskManager.getHistory());
+        taskManager.getSubTaskByIDorNull(subTask1InEpic2);
+        System.out.println(taskManager.getHistory());
         for (int i = 0; i < 10; i++) {
-            inMemoryTaskManager.getSimpleTaskByIDorNull(taskID);
+            taskManager.getSimpleTaskByIDorNull(taskID);
         }
-        System.out.println(inMemoryTaskManager.getInMemoryHistoryManager().getHistory()); // должны остаться только task
-        //Assertions.assertEquals(10, inMemoryTaskManager.inMemoryHistoryManager.getHistory().size());
+        System.out.println(taskManager.getHistory()); // должны остаться только task
 
     }
 
