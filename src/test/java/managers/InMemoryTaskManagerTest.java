@@ -222,7 +222,7 @@ class InMemoryTaskManagerTest {
         Assertions.assertEquals(Status.IN_PROGRESS, taskManager.getEpicTaskByIDorNull(epic1ID).getStatus());
 
         // Проверить, что ID сабтаски удален из списка в её эпике
-        ArrayList<Long> subTasksOfEpic1 = taskManager.getEpicTaskByIDorNull(epic1ID).subTasksIDs;
+        ArrayList<Long> subTasksOfEpic1 = taskManager.getEpicTaskByIDorNull(epic1ID).getSubTasksIDs();
         Assertions.assertFalse(subTasksOfEpic1.contains(subTask4InEpic1));
     }
 

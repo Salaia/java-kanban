@@ -3,10 +3,13 @@ package managers;
 import tasks.Task;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public interface HistoryManager {
 
     void add(Task task);
 
-    ArrayList<Task> getHistory();
+    List<Task> getHistory();
+    void remove(Long id); // для удаления задачи из просмотра. По ТЗ ID int, но у нас они все в Long
 }

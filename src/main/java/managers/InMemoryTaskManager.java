@@ -5,9 +5,8 @@ import tasks.Status;
 import tasks.SubTask;
 import tasks.Task;
 
+import java.util.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
 
 public class InMemoryTaskManager implements TaskManager {
     private Long countID; // does ++countID when new Task()
@@ -30,7 +29,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
+    public List<Task> getHistory() {
         return historyManager.getHistory();
     }
 
@@ -69,34 +68,36 @@ public class InMemoryTaskManager implements TaskManager {
         if (!subTasks.isEmpty()) {
             subTasks.clear();
             for (EpicTask epic : epicTasks.values()) {
-                epic.subTasksIDs.clear();
+                epic.getSubTasksIDs().clear();
                 epic.setStatus(Status.NEW); // Без сабтасок эпики теперь пустые, и статус у них должен быть "новый"
             }
         }
     }
 
     @Override
-    public void deleteSimpleTask(Long ID) {
-        simpleTasks.remove(ID);
+    public void deleteSimpleTask(Long id) {
+        simpleTasks.remove(id);
+        historyManager.remove(id);
     } // deleteSimpleTask
 
     @Override
-    public void deleteEpicTask(Long ID) {
-        // убрала алгоритм квадратичной сложности 🙂
+    public void deleteEpicTask(Long id) {
         for (SubTask subTask : subTasks.values()) {
-            if (Objects.equals(subTask.getEpicID(), ID)) {
+            if (Objects.equals(subTask.getEpicID(), id)) {
                 subTasks.remove(subTask.getID());
+                historyManager.remove(subTask.getID());
             }
         }
-        epicTasks.remove(ID);
-        epicTasks.remove(ID);
+        epicTasks.remove(id);
+        historyManager.remove(id);
     } // deleteEpicTask
 
     @Override
-    public void deleteSubTask(Long ID) {
-        Long epicID = subTasks.get(ID).getEpicID();
-        epicTasks.get(epicID).subTasksIDs.remove(ID); // удаляет сабтаску из списка внутри её эпика
-        subTasks.remove(ID);
+    public void deleteSubTask(Long id) {
+        Long epicID = subTasks.get(id).getEpicID();
+        epicTasks.get(epicID).getSubTasksIDs().remove(id); // удаляет сабтаску из списка внутри её эпика
+        subTasks.remove(id);
+        historyManager.remove(id);
         updateEpicStatus(epicID);
     }
 
@@ -137,7 +138,7 @@ public class InMemoryTaskManager implements TaskManager {
     public ArrayList<SubTask> getAllSubTasksOfEpicOrNull(Long epicID) {  // вызывать через if (!=null) !!!
         ArrayList<SubTask> subsOfThisEpic = new ArrayList<>();
         for (SubTask subTask : subTasks.values()) {
-            for (Long epicSubsID : epicTasks.get(epicID).subTasksIDs) {
+            for (Long epicSubsID : epicTasks.get(epicID).getSubTasksIDs()) {
                 if (Objects.equals(epicSubsID, subTask.getID())) {
                     subsOfThisEpic.add(subTask);
                 }
@@ -190,19 +191,19 @@ public class InMemoryTaskManager implements TaskManager {
         }
         // после проверок добавить задачу в общий список задач и в список подзадач эпика
         subTasks.put(subTask.getID(), subTask);
-        epicTasks.get(subTask.getEpicID()).subTasksIDs.add(subTask.getID()); // Уже была проверка на дублирование задачи
+        epicTasks.get(subTask.getEpicID()).getSubTasksIDs().add(subTask.getID()); // Уже была проверка на дублирование задачи
 
         // Если подзадача была завершена, нужно проверить, не последняя ли она в эпике, и если да, то и весь эпик пометить DONE
         if (subTask.getStatus().equals(Status.DONE)) {
             Long epicID = subTask.getEpicID();
             EpicTask parentEpic = epicTasks.get(epicID);
             int finishedTasks = 0;
-            for (Long taskID : parentEpic.subTasksIDs) {
+            for (Long taskID : parentEpic.getSubTasksIDs()) {
                 if (subTasks.get(taskID).getStatus().equals(Status.DONE)) {
                     finishedTasks++;
                 }
             }
-            if (finishedTasks != 0 && finishedTasks == parentEpic.subTasksIDs.size()) {
+            if (finishedTasks != 0 && finishedTasks == parentEpic.getSubTasksIDs().size()) {
                 epicTasks.get(epicID).setStatus(Status.DONE);
             } else {
                 epicTasks.get(epicID).setStatus(Status.IN_PROGRESS);
