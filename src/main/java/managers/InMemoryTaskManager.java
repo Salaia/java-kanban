@@ -82,7 +82,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteEpicTask(Long id) {
-        for (SubTask subTask : subTasks.values()) {
+        HashMap<Long, SubTask> copySubtasks = new HashMap<>(subTasks);
+        for (SubTask subTask : copySubtasks.values()) {
             if (Objects.equals(subTask.getEpicID(), id)) {
                 subTasks.remove(subTask.getID());
                 historyManager.remove(subTask.getID());
@@ -138,10 +139,8 @@ public class InMemoryTaskManager implements TaskManager {
     public ArrayList<SubTask> getAllSubTasksOfEpicOrNull(Long epicID) {  // вызывать через if (!=null) !!!
         ArrayList<SubTask> subsOfThisEpic = new ArrayList<>();
         for (SubTask subTask : subTasks.values()) {
-            for (Long epicSubsID : epicTasks.get(epicID).getSubTasksIDs()) {
-                if (Objects.equals(epicSubsID, subTask.getID())) {
-                    subsOfThisEpic.add(subTask);
-                }
+            if (Objects.equals(subTask.getEpicID(), epicID)) {
+                subsOfThisEpic.add(subTask);
             }
         }
         return subsOfThisEpic;

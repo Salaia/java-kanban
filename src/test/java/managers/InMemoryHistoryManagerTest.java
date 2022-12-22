@@ -36,9 +36,6 @@ class InMemoryHistoryManagerTest {
 
         System.out.println("Проверка по ТЗ, проверка на отсутствие повторов: \n" + taskManager.getHistory());
 
-        System.out.println("Remove epic with subs:");
-        taskManager.deleteEpicTask(epic1ID);
-        taskManager.deleteSubTask(subTask1InEpic2); // Почему-то удаляет simple task
         taskManager.deleteEpicTask(epic2ID);
         System.out.println("Должен уйти эпик с сабами: \n" + taskManager.getHistory());
 
