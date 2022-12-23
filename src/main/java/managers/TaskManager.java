@@ -11,11 +11,11 @@ import java.util.List;
 public interface TaskManager {
 
     List<Task> getHistory();
-    ArrayList<Task> getSimpleTasks();
+    List<Task> getSimpleTasks();
 
-    ArrayList<EpicTask> getEpicTasks();
+    List<EpicTask> getEpicTasks();
 
-    ArrayList<SubTask> getSubTasks();
+    List<SubTask> getSubTasks();
 
     void deleteAllSimpleTasks();
 
@@ -23,19 +23,19 @@ public interface TaskManager {
 
     void deleteAllSubTasks();
 
-    void deleteSimpleTask(Long ID);
+    void deleteSimpleTask(Long id);
 
-    void deleteEpicTask(Long ID);
+    void deleteEpicTask(Long id);
 
-    void deleteSubTask(Long ID);
+    void deleteSubTask(Long id);
 
-    Task getSimpleTaskByIDorNull(Long ID);
+    Task getSimpleTaskByIdOrNull(Long id);
 
-    EpicTask getEpicTaskByIDorNull(Long ID);
+    EpicTask getEpicTaskByIdOrNull(Long id);
 
-    SubTask getSubTaskByIDorNull(Long ID);
+    SubTask getSubTaskByIdOrNull(Long id);
 
-    ArrayList<SubTask> getAllSubTasksOfEpicOrNull(Long epicID);
+    List<SubTask> getAllSubTasksOfEpicOrNull(Long epicId);
 
     Long recordSimpleTask(Task task);
 

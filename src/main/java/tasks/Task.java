@@ -1,10 +1,12 @@
 package tasks;
 
+import java.util.Objects;
+
 public class Task {
     private String name;
     private String description;
 
-    private Long ID; // Счётчик countID в TaskManager. Интересно, мы его оставим как счётчик или потом заменим на hash
+    private Long id; // Счётчик countID в TaskManager. Интересно, мы его оставим как счётчик или потом заменим на hash
     private Status status;
 
     public Status getStatus() {
@@ -17,8 +19,8 @@ public class Task {
         this.description = description;
     }
 
-    public void setID(Long ID) {
-        this.ID = ID;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setStatus(Status status) {
@@ -33,8 +35,8 @@ public class Task {
         return description;
     }
 
-    public Long getID() {
-        return ID;
+    public Long getId() {
+        return id;
     }
 
     public void setName(String name) {
@@ -43,5 +45,18 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return Objects.equals(name, task.name) && Objects.equals(description, task.description) && Objects.equals(id, task.id) && status == task.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, id, status);
     }
 }

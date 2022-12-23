@@ -7,13 +7,16 @@ import tasks.EpicTask;
 import tasks.SubTask;
 import tasks.Task;
 
+import java.util.HashSet;
+import java.util.Set;
+
 class InMemoryHistoryManagerTest {
     static TaskManager taskManager = Managers.getDefault();
 
     @Test
     void getHistory() {
-        System.out.println(taskManager.getHistory());
-        System.out.println("\nИстория в тестах смешивается, то есть, в тест getHistory попадает история из SimpleFive\n");
+        taskManager.deleteAllSimpleTasks();
+        taskManager.deleteAllEpicTasks();
 
         Long taskID = taskManager.recordSimpleTask(new Task("SimpleTaskName", "SimpleTaskDescription"));
         Long epic1ID = taskManager.recordEpicTask(new EpicTask("EpicName1", "Epic1descr"));
@@ -23,21 +26,30 @@ class InMemoryHistoryManagerTest {
         Long subTask3InEpic2 = taskManager.recordSubTask(new SubTask("SubTask3 in epic2", "some description", epic2ID));
 
 
-        taskManager.getSimpleTaskByIDorNull(taskID);
-        taskManager.getEpicTaskByIDorNull(epic1ID);
-        taskManager.getEpicTaskByIDorNull(epic2ID);
-        taskManager.getSubTaskByIDorNull(subTask1InEpic2);
-        taskManager.getSubTaskByIDorNull(subTask2InEpic2);
-        taskManager.getSubTaskByIDorNull(subTask3InEpic2);
+        taskManager.getSimpleTaskByIdOrNull(taskID);
+        taskManager.getEpicTaskByIdOrNull(epic1ID);
+        taskManager.getEpicTaskByIdOrNull(epic2ID);
+        taskManager.getSubTaskByIdOrNull(subTask1InEpic2);
+        taskManager.getSubTaskByIdOrNull(subTask2InEpic2);
+        taskManager.getSubTaskByIdOrNull(subTask3InEpic2);
         // Повторные запросы
-        taskManager.getSimpleTaskByIDorNull(taskID);
-        taskManager.getEpicTaskByIDorNull(epic1ID);
-        taskManager.getSubTaskByIDorNull(subTask1InEpic2);
+        taskManager.getSimpleTaskByIdOrNull(taskID);
+        taskManager.getEpicTaskByIdOrNull(epic1ID);
+        taskManager.getSubTaskByIdOrNull(subTask1InEpic2);
 
-        System.out.println("Проверка по ТЗ, проверка на отсутствие повторов: \n" + taskManager.getHistory());
+        //проверка на отсутствие повторов:
+        Set<Task> historySet = new HashSet<>(taskManager.getHistory());
+        Assertions.assertEquals(historySet.size(), taskManager.getHistory().size());
 
         taskManager.deleteEpicTask(epic2ID);
-        System.out.println("Должен уйти эпик с сабами: \n" + taskManager.getHistory());
+        //Должен уйти эпик с сабами
+        Assertions.assertFalse(taskManager.getHistory().contains(taskManager.getEpicTaskByIdOrNull(epic2ID)));
+        Assertions.assertFalse(taskManager.getHistory().contains(taskManager.getSubTaskByIdOrNull(subTask1InEpic2)));
+        Assertions.assertFalse(taskManager.getHistory().contains(taskManager.getSubTaskByIdOrNull(subTask2InEpic2)));
+        Assertions.assertFalse(taskManager.getHistory().contains(taskManager.getSubTaskByIdOrNull(subTask3InEpic2)));
+        // Другие выжили
+        Assertions.assertTrue(taskManager.getHistory().contains(taskManager.getEpicTaskByIdOrNull(epic1ID)));
+        Assertions.assertTrue(taskManager.getHistory().contains(taskManager.getSimpleTaskByIdOrNull(taskID)));
 
     }
 
@@ -49,37 +61,35 @@ class InMemoryHistoryManagerTest {
         Long task4 = taskManager.recordSimpleTask(new Task("N", "d"));
         Long task5 = taskManager.recordSimpleTask(new Task("N", "d"));
 
-        taskManager.getSimpleTaskByIDorNull(task1);
-        taskManager.getSimpleTaskByIDorNull(task2);
-        taskManager.getSimpleTaskByIDorNull(task3);
-        taskManager.getSimpleTaskByIDorNull(task4);
-        taskManager.getSimpleTaskByIDorNull(task5);
-        System.out.println("Simple history direct order: " + taskManager.getHistory() + "\n");
+        taskManager.getSimpleTaskByIdOrNull(task1);
+        taskManager.getSimpleTaskByIdOrNull(task2);
+        taskManager.getSimpleTaskByIdOrNull(task3);
+        taskManager.getSimpleTaskByIdOrNull(task4);
+        taskManager.getSimpleTaskByIdOrNull(task5);
 
-        // move your body
-        System.out.println("Moves tasks 2, 3 and 4 (body)");
-        taskManager.getSimpleTaskByIDorNull(task2);
-        System.out.println(taskManager.getHistory());
-        taskManager.getSimpleTaskByIDorNull(task3);
-        System.out.println(taskManager.getHistory());
-        taskManager.getSimpleTaskByIDorNull(task4);
-        System.out.println(taskManager.getHistory() + "\n");
+        // Moves tasks 2, 3 and 4 (body)
+        taskManager.getSimpleTaskByIdOrNull(task2);
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task2));
+        taskManager.getSimpleTaskByIdOrNull(task3);
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task3));
+        taskManager.getSimpleTaskByIdOrNull(task4);
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task4));
 
         // head and tail
-        taskManager.getSimpleTaskByIDorNull(task1);
-        System.out.println("head -> tail:\n" + taskManager.getHistory()); // head -> tail
-        taskManager.getSimpleTaskByIDorNull(task5);
-        System.out.println("\nold tail-head is tail again:\n" + taskManager.getHistory()); // old tail is tail again
-        taskManager.getSimpleTaskByIDorNull(task4);
-        System.out.println("After moving tail-head, move body node to tail:\n" + taskManager.getHistory());
+        taskManager.getSimpleTaskByIdOrNull(task1);
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task1));
+        taskManager.getSimpleTaskByIdOrNull(task5);
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task5));
+        taskManager.getSimpleTaskByIdOrNull(task4);
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task4));
 
         // remove simple task
         taskManager.deleteSimpleTask(task1);
-        System.out.println("Removed body simple task: \n" + taskManager.getHistory()); // Все норм
+        Assertions.assertFalse(taskManager.getHistory().contains(taskManager.getSimpleTaskByIdOrNull(task1)));
         taskManager.deleteSimpleTask(task2);
-        System.out.println("Removed head simple task: \n" + taskManager.getHistory()); // Все норм
+        Assertions.assertFalse(taskManager.getHistory().contains(taskManager.getSimpleTaskByIdOrNull(task2)));
         taskManager.deleteSimpleTask(task4);
-        System.out.println("Removed tail simple task: \n" + taskManager.getHistory()); // Все норм
+        Assertions.assertFalse(taskManager.getHistory().contains(taskManager.getSimpleTaskByIdOrNull(task4)));
 
         // Отдельно оно работает, но если вслед за этим запустить второй тест - нет.
 

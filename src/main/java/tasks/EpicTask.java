@@ -3,15 +3,15 @@ package tasks;
 import java.util.ArrayList;
 
 public class EpicTask extends Task {
-    private final ArrayList<Long> subTasksIDs;
+    private final ArrayList<Long> subTasksIds;
 
     public EpicTask(String name, String description) {
         super(name, description);
-        subTasksIDs = new ArrayList<>();
+        subTasksIds = new ArrayList<>();
     }
 
-    public ArrayList<Long> getSubTasksIDs() {
-        return subTasksIDs;
+    public ArrayList<Long> getSubTasksIds() {
+        return subTasksIds;
     }
 
 }

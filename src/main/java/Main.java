@@ -24,14 +24,14 @@ public class Main {
         Long epic2ID = taskManager.recordEpicTask(new EpicTask("EpicName2", "Epic2descr"));
         Long subTask1InEpic2 = taskManager.recordSubTask(new SubTask("SubTask1 in epic2", "some description", epic2ID));
 
-        taskManager.getSimpleTaskByIDorNull(taskID);
+        taskManager.getSimpleTaskByIdOrNull(taskID);
         System.out.println(taskManager.getHistory());
-        taskManager.getEpicTaskByIDorNull(epic1ID);
+        taskManager.getEpicTaskByIdOrNull(epic1ID);
         System.out.println(taskManager.getHistory());
-        taskManager.getSubTaskByIDorNull(subTask1InEpic2);
+        taskManager.getSubTaskByIdOrNull(subTask1InEpic2);
         System.out.println(taskManager.getHistory());
         for (int i = 0; i < 10; i++) {
-            taskManager.getSimpleTaskByIDorNull(taskID);
+            taskManager.getSimpleTaskByIdOrNull(taskID);
         }
         System.out.println(taskManager.getHistory()); // должны остаться только task
 

@@ -1,15 +1,15 @@
 package tasks;
 
 public class SubTask extends Task {
-    Long epicID; // Какому эпику принадлежит
+    Long epicId; // Какому эпику принадлежит
 
     // Конструктор под создание
-    public SubTask(String name, String description, Long epicID) {
+    public SubTask(String name, String description, Long epicId) {
         super(name, description);
-        this.epicID = epicID;
+        this.epicId = epicId;
     }
 
-    public Long getEpicID() {
-        return epicID;
+    public Long getEpicId() {
+        return epicId;
     }
 }
