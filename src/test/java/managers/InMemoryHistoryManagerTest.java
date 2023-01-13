@@ -2,11 +2,9 @@ package managers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.ls.LSOutput;
 import tasks.EpicTask;
 import tasks.SubTask;
 import tasks.Task;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,7 +59,7 @@ class InMemoryHistoryManagerTest {
         Long task4 = taskManager.recordSimpleTask(new Task("N", "d"));
         Long task5 = taskManager.recordSimpleTask(new Task("N", "d"));
 
-        taskManager.getSimpleTaskByIdOrNull(task1);
+        //taskManager.getSimpleTaskByIdOrNull(task1);
         taskManager.getSimpleTaskByIdOrNull(task2);
         taskManager.getSimpleTaskByIdOrNull(task3);
         taskManager.getSimpleTaskByIdOrNull(task4);
@@ -83,6 +81,11 @@ class InMemoryHistoryManagerTest {
         taskManager.getSimpleTaskByIdOrNull(task4);
         Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task4));
 
+        //проверка на отсутствие повторов:
+        Set<Task> historySet = new HashSet<>(taskManager.getHistory());
+        Assertions.assertEquals(historySet.size(), taskManager.getHistory().size());
+
+
         // remove simple task
         taskManager.deleteSimpleTask(task1);
         Assertions.assertFalse(taskManager.getHistory().contains(taskManager.getSimpleTaskByIdOrNull(task1)));
@@ -91,7 +94,9 @@ class InMemoryHistoryManagerTest {
         taskManager.deleteSimpleTask(task4);
         Assertions.assertFalse(taskManager.getHistory().contains(taskManager.getSimpleTaskByIdOrNull(task4)));
 
-        // Отдельно оно работает, но если вслед за этим запустить второй тест - нет.
+        //проверка на отсутствие повторов:
+        Set<Task> historySet1 = new HashSet<>(taskManager.getHistory());
+        Assertions.assertEquals(historySet1.size(), taskManager.getHistory().size());
 
     }
 

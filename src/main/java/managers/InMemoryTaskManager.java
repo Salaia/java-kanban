@@ -10,10 +10,10 @@ import java.util.ArrayList;
 
 public class InMemoryTaskManager implements TaskManager {
     private Long countId; // does ++countId when new Task()
-    // Во всех мапах Long == ID задачи
-    private final Map<Long, Task> simpleTasks;
-    private final Map<Long, EpicTask> epicTasks;
-    private final Map<Long, SubTask> subTasks;
+    // Во всех мапах Long == ID задачи. Поменяла всем на protected для доступа из наследника
+    protected final Map<Long, Task> simpleTasks;
+    protected final Map<Long, EpicTask> epicTasks;
+    protected final Map<Long, SubTask> subTasks;
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     // Конструктор
@@ -254,5 +254,9 @@ public class InMemoryTaskManager implements TaskManager {
             epicTask.setStatus(Status.IN_PROGRESS);
         }
     } // updateEpicStatus
+
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
 
 } // TaskManager

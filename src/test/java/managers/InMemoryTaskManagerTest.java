@@ -6,8 +6,9 @@ import tasks.SubTask;
 import tasks.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 class InMemoryTaskManagerTest {
     TaskManager taskManager = Managers.getDefault();
@@ -267,5 +268,10 @@ class InMemoryTaskManagerTest {
         Assertions.assertEquals(Status.IN_PROGRESS, taskManager.getEpicTaskByIdOrNull(epic1ID).getStatus());
         taskManager.deleteSubTask(subTask4InEpic1);
         Assertions.assertEquals(Status.IN_PROGRESS, taskManager.getEpicTaskByIdOrNull(epic1ID).getStatus());
+
+        //проверка на отсутствие повторов:
+        Set<Task> historySet = new HashSet<>(taskManager.getHistory());
+        Assertions.assertEquals(historySet.size(), taskManager.getHistory().size());
+
     }
 }
