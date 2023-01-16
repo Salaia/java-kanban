@@ -55,45 +55,45 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Task getSimpleTaskByIdOrNull(Long id) {
-        super.getSimpleTaskByIdOrNull(id); // переместить в истории
+        Task task = super.getSimpleTaskByIdOrNull(id);
         save();
-        return super.getSimpleTaskByIdOrNull(id); // получить таску
+        return task;
 
     }
 
     @Override
     public EpicTask getEpicTaskByIdOrNull(Long id) {
-        super.getEpicTaskByIdOrNull(id);
+        EpicTask epicTask = super.getEpicTaskByIdOrNull(id);
         save();
-        return super.getEpicTaskByIdOrNull(id);
+        return epicTask;
     }
 
     @Override
     public SubTask getSubTaskByIdOrNull(Long id) {
-        super.getSubTaskByIdOrNull(id);
+        SubTask subTask = super.getSubTaskByIdOrNull(id);
         save();
-        return super.getSubTaskByIdOrNull(id);
+        return subTask;
     }
 
     @Override
     public Long recordSimpleTask(Task task) {
-        super.recordSimpleTask(task);
+        Long id = super.recordSimpleTask(task);
         save();
-        return task.getId();
+        return id;
     }
 
     @Override
     public Long recordEpicTask(EpicTask epicTask) {
-        super.recordEpicTask(epicTask);
+        Long id = super.recordEpicTask(epicTask);
         save();
-        return epicTask.getId();
+        return id;
     }
 
     @Override
     public Long recordSubTask(SubTask subTask) {
-        super.recordSubTask(subTask);
+        Long id = super.recordSubTask(subTask);
         save();
-        return subTask.getId();
+        return id;
     }
 
     @Override
@@ -115,7 +115,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     // будет сохранять текущее состояние менеджера в указанный файл (file)
-    private void save() { // throws ManagerSaveException
+    private void save() {
         String header = "id,type,name,status,description,epic\n";
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file))) {
             fileWriter.write(header);
@@ -139,7 +139,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            //throw new ManagerSaveException("ManagerSaveException"); кто как его ловить должен я не поняла :(
+            throw new ManagerSaveException("ManagerSaveException");
         }
     } // save
 
@@ -239,11 +239,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 // дальше я проверяю, в какой мапе TaskManager есть ид по данному индексу в списке-истории
                 // после чего добавляю таску в историю HistoryManager
                 if (fileBackedTaskManager.simpleTasks.containsKey(historyList.get(i))) {
-                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.getSimpleTaskByIdOrNull(historyList.get(i)));
+                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.simpleTasks.get(historyList.get(i)));
                 } else if (fileBackedTaskManager.epicTasks.containsKey(historyList.get(i))) {
-                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.getEpicTaskByIdOrNull(historyList.get(i)));
+                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.epicTasks.get(historyList.get(i)));
                 } else if (fileBackedTaskManager.subTasks.containsKey(historyList.get(i))) {
-                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.getSubTaskByIdOrNull(historyList.get(i)));
+                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.subTasks.get(historyList.get(i)));
                 }
             }
 

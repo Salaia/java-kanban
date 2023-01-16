@@ -7,8 +7,8 @@ import java.util.*;
 public class InMemoryHistoryManager implements HistoryManager {
 
     private final Map<Long, Node> history; // История
-    private Node head; // Он же first
-    private Node tail; // Он же last
+    private Node head = null; // Он же first
+    private Node tail = null; // Он же last
 
     // Конструктор
     public InMemoryHistoryManager() {
@@ -38,28 +38,31 @@ public class InMemoryHistoryManager implements HistoryManager {
     } // remove
 
     public void linkLast(Task element) { //  будет добавлять задачу в конец этого списка
-        final Node oldTail = tail;
-        final Node newTail = new Node(oldTail, element, null);
-        tail = newTail;
-
-        if (head == null && oldTail == null) {
-            head = newTail;
+        if (head == null) {
+            head = new Node(null, element, null);
+            tail = head;
+        } else if (head != null && head.next == null) {
+            tail = new Node(head, element, null);
+            head.next = tail;
         } else {
-            oldTail.next = newTail;
+            Node oldTail = tail;
+            Node newNode = new Node(oldTail, element, null);
+            tail.next = newNode;
+            tail = newNode;
         }
     } // linkLast
 
     private List<Task> getTasks() {
-        if(history.isEmpty()) {
+        if (history.isEmpty()) {
             return null; // нужно в FileBackedTaskManager для проверки сохранять ли историю в файл или NullPointer настигнет вас
         }
         List<Task> result = new ArrayList<>();
         Node currentNode = head;
         result.add(head.data);
 
-        while (currentNode.next != null && history.size() > 1) {
-            result.add(currentNode.next.data);
+        while (currentNode.next != null) {
             currentNode = currentNode.next;
+            result.add(currentNode.data);
         }
         return result;
     } // getTasks
@@ -74,6 +77,9 @@ public class InMemoryHistoryManager implements HistoryManager {
             node.prev.next = node.next;
             node.next.prev = node.prev;
             history.remove(task.getId());
+        } else if (node.prev == null && node.next == null) { // head is the only
+            head = null;
+            tail = null;
         } else if (node.prev != null) {// TAIL
             tail = node.prev;
             node.prev.next = null;
@@ -84,6 +90,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             history.remove(task.getId());
         }
     } // removeNode
+
     class Node {
         public Task data; // данные в узле
         public Node next;

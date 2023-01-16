@@ -1,0 +1,12 @@
+
+public void linkLast(Task element) { //  эта версия задваивает голову
+        final Node oldTail = tail;
+        final Node newTail = new Node(oldTail, element, null);
+        tail = newTail;
+
+        if (head == null && oldTail == null) {
+            head = newTail;
+        } else {
+            oldTail.next = newTail;
+        }
+    } // linkLast

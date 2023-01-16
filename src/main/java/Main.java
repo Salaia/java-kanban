@@ -6,6 +6,10 @@ import tasks.Task;
 
 import java.util.HashMap;
 
+/*
+    Тесты здесь делать перестала, тут всё старое - не знаю даже, удалить и оставить файл пустым, что ли...
+ */
+
 public class Main {
 
     public static void main(String[] args) {

@@ -11,6 +11,7 @@ import java.util.List;
 public interface TaskManager {
 
     List<Task> getHistory();
+
     List<Task> getSimpleTasks();
 
     List<EpicTask> getEpicTasks();

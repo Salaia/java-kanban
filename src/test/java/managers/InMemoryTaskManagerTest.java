@@ -6,12 +6,16 @@ import tasks.SubTask;
 import tasks.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 class InMemoryTaskManagerTest {
     TaskManager taskManager = Managers.getDefault();
+    //static TaskManager taskManager = new FileBackedTaskManager(new File("src/main/java/storage/TaskManagerSaved.csv"));
+
 
     @Test
     void createSimpleTask() {

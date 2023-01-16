@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import tasks.EpicTask;
 import tasks.SubTask;
 import tasks.Task;
+
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -67,19 +69,19 @@ class InMemoryHistoryManagerTest {
 
         // Moves tasks 2, 3 and 4 (body)
         taskManager.getSimpleTaskByIdOrNull(task2);
-        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task2));
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size() - 1), taskManager.getSimpleTaskByIdOrNull(task2));
         taskManager.getSimpleTaskByIdOrNull(task3);
-        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task3));
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size() - 1), taskManager.getSimpleTaskByIdOrNull(task3));
         taskManager.getSimpleTaskByIdOrNull(task4);
-        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task4));
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size() - 1), taskManager.getSimpleTaskByIdOrNull(task4));
 
         // head and tail
         taskManager.getSimpleTaskByIdOrNull(task1);
-        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task1));
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size() - 1), taskManager.getSimpleTaskByIdOrNull(task1));
         taskManager.getSimpleTaskByIdOrNull(task5);
-        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task5));
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size() - 1), taskManager.getSimpleTaskByIdOrNull(task5));
         taskManager.getSimpleTaskByIdOrNull(task4);
-        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size()-1), taskManager.getSimpleTaskByIdOrNull(task4));
+        Assertions.assertEquals(taskManager.getHistory().get(taskManager.getHistory().size() - 1), taskManager.getSimpleTaskByIdOrNull(task4));
 
         //проверка на отсутствие повторов:
         Set<Task> historySet = new HashSet<>(taskManager.getHistory());

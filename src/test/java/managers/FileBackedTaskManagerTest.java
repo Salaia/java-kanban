@@ -1,50 +1,76 @@
 package managers;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.ls.LSOutput;
 import tasks.EpicTask;
 import tasks.SubTask;
 import tasks.Task;
+
 import java.io.File;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 class FileBackedTaskManagerTest {
 
-        @Test
-        void MemoryToFileTest() {
-                TaskManager fileBackedTaskManager = new FileBackedTaskManager(
-                        new File("src/main/java/storage/TaskManagerSaved.csv"));
+    @Test
+    void MainTest() {
+        TaskManager fileBackedTaskManager = new FileBackedTaskManager(
+                new File("src/main/java/storage/TaskManagerSaved.csv"));
 
-                Long taskID = fileBackedTaskManager.recordSimpleTask(new Task("SimpleTaskName", "SimpleTaskDescription"));
-                Long epic1ID = fileBackedTaskManager.recordEpicTask(new EpicTask("EpicName1", "Epic1descr"));
-                Long epic2ID = fileBackedTaskManager.recordEpicTask(new EpicTask("EpicName2", "Epic2descr"));
-                Long subTask1InEpic2 = fileBackedTaskManager.recordSubTask(new SubTask("SubTask1 in epic2", "some description", epic2ID));
-                Long subTask2InEpic2 = fileBackedTaskManager.recordSubTask(new SubTask("SubTask2 in epic2", "some description", epic2ID));
-                Long subTask3InEpic2 = fileBackedTaskManager.recordSubTask(new SubTask("SubTask3 in epic2", "some description", epic2ID));
+        // создаем разные таски
+        Long taskID = fileBackedTaskManager.recordSimpleTask(new Task("SimpleTaskName", "SimpleTaskDescription"));
+        Long epic1ID = fileBackedTaskManager.recordEpicTask(new EpicTask("EpicName1", "Epic1descr"));
+        Long epic2ID = fileBackedTaskManager.recordEpicTask(new EpicTask("EpicName2", "Epic2descr"));
+        Long subTask1InEpic2 = fileBackedTaskManager.recordSubTask(new SubTask("SubTask1 in epic2", "some description", epic2ID));
+        Long subTask2InEpic2 = fileBackedTaskManager.recordSubTask(new SubTask("SubTask2 in epic2", "some description", epic2ID));
+        Long subTask3InEpic2 = fileBackedTaskManager.recordSubTask(new SubTask("SubTask3 in epic2", "some description", epic2ID));
 
-                fileBackedTaskManager.getSimpleTaskByIdOrNull(taskID);
-                fileBackedTaskManager.getEpicTaskByIdOrNull(epic1ID);
-                fileBackedTaskManager.getEpicTaskByIdOrNull(epic2ID);
-                fileBackedTaskManager.getSubTaskByIdOrNull(subTask1InEpic2);
-                fileBackedTaskManager.getSubTaskByIdOrNull(subTask2InEpic2);
-                fileBackedTaskManager.getSubTaskByIdOrNull(subTask3InEpic2);
+        // заполняем историю
+        fileBackedTaskManager.getSimpleTaskByIdOrNull(taskID);
+        fileBackedTaskManager.getSimpleTaskByIdOrNull(taskID);
+        fileBackedTaskManager.getEpicTaskByIdOrNull(epic2ID);
+        fileBackedTaskManager.getSubTaskByIdOrNull(subTask3InEpic2);
+        fileBackedTaskManager.getSimpleTaskByIdOrNull(taskID);
 
-                //проверка на отсутствие повторов проваливается, потому что двоится голова
-                //Set<Task> historySet = new HashSet<>(fileBackedTaskManager.getHistory());
-                //System.out.println(historySet.size() + " " + fileBackedTaskManager.getHistory().size());
-                //System.out.println(fileBackedTaskManager.getHistory());
-                //Assertions.assertEquals(historySet.size(), fileBackedTaskManager.getHistory().size());
+        // какие-то таски удаляем
+        fileBackedTaskManager.deleteSimpleTask(taskID);
+        fileBackedTaskManager.deleteSubTask(subTask1InEpic2);
+        fileBackedTaskManager.deleteEpicTask(epic1ID);
 
+        //проверка на отсутствие повторов
+        Set<Task> historySet = new HashSet<>(fileBackedTaskManager.getHistory());
+        Assertions.assertEquals(historySet.size(), fileBackedTaskManager.getHistory().size());
+
+        //Создаем второй fileBackedTaskManager и восстанавливаем его из файла
+        FileBackedTaskManager fileBackedTaskManagerRestored = FileBackedTaskManager.loadFromFile(
+                new File("src/main/java/storage/TaskManagerSaved.csv"));
+
+        // проверяем, что в обоих менеджерах таски лежат одинаково
+        List<Task> simpleTaskList = fileBackedTaskManager.getSimpleTasks();
+        List<Task> simpleTaskListRestored = fileBackedTaskManagerRestored.getSimpleTasks();
+        for (int i = 0; i < simpleTaskList.size(); i++) {
+            Assertions.assertEquals(simpleTaskList.get(i), simpleTaskListRestored.get(i));
         }
 
-        @Test
-        void FileToMemoryTest() {
-                FileBackedTaskManager fileBackedTaskManager = FileBackedTaskManager.loadFromFile(
-                        new File("src/main/java/storage/TaskManagerSaved.csv"));
-
-            // assertions - не могу придумать как, так что пока через sout
-                System.out.println(fileBackedTaskManager.getSimpleTasks());
-            System.out.println(fileBackedTaskManager.getEpicTasks());
-            System.out.println(fileBackedTaskManager.getSubTasks());
-                System.out.println("\n" + fileBackedTaskManager.getHistory());
+        List<Task> epicTaskList = fileBackedTaskManager.getSimpleTasks();
+        List<Task> epicTaskListRestored = fileBackedTaskManagerRestored.getSimpleTasks();
+        for (int i = 0; i < epicTaskList.size(); i++) {
+            Assertions.assertEquals(epicTaskList.get(i), epicTaskListRestored.get(i));
         }
 
+        List<Task> subTaskList = fileBackedTaskManager.getSimpleTasks();
+        List<Task> subTaskListRestored = fileBackedTaskManagerRestored.getSimpleTasks();
+        for (int i = 0; i < subTaskList.size(); i++) {
+            Assertions.assertEquals(subTaskList.get(i), subTaskListRestored.get(i));
+        }
+
+        // проверяем историю
+        List<Task> history = fileBackedTaskManager.getHistory();
+        List<Task> historyRestored = fileBackedTaskManagerRestored.getHistory();
+        for (int i = 0; i < history.size(); i++) {
+            Assertions.assertEquals(history.get(i), historyRestored.get(i));
+        }
+    }
 }
