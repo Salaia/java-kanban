@@ -2,12 +2,16 @@ package managers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.ls.LSOutput;
 import tasks.EpicTask;
 import tasks.SubTask;
 import tasks.Task;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -72,5 +76,44 @@ class FileBackedTaskManagerTest {
         for (int i = 0; i < history.size(); i++) {
             Assertions.assertEquals(history.get(i), historyRestored.get(i));
         }
+    }
+
+    @Test
+    public void emptyTesting() {
+        TaskManager fileBackedTaskManager = new FileBackedTaskManager(
+                new File("src/main/java/storage/TaskManagerSaved.csv"));
+        try (BufferedWriter bf = Files.newBufferedWriter(Path.of("src/main/java/storage/TaskManagerSaved.csv"),
+                StandardOpenOption.TRUNCATE_EXISTING)) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //Создаем второй fileBackedTaskManager и восстанавливаем его из файла
+        FileBackedTaskManager fileBackedTaskManagerRestored = FileBackedTaskManager.loadFromFile(
+                new File("src/main/java/storage/TaskManagerSaved.csv"));
+
+        // проверяем, что в обоих менеджерах таски лежат одинаково
+        List<Task> simpleTaskList = fileBackedTaskManager.getSimpleTasks();
+        List<Task> simpleTaskListRestored = fileBackedTaskManagerRestored.getSimpleTasks();
+        for (int i = 0; i < simpleTaskList.size(); i++) {
+            Assertions.assertEquals(simpleTaskList.get(i), simpleTaskListRestored.get(i));
+        }
+
+        List<Task> epicTaskList = fileBackedTaskManager.getSimpleTasks();
+        List<Task> epicTaskListRestored = fileBackedTaskManagerRestored.getSimpleTasks();
+        for (int i = 0; i < epicTaskList.size(); i++) {
+            Assertions.assertEquals(epicTaskList.get(i), epicTaskListRestored.get(i));
+        }
+
+        List<Task> subTaskList = fileBackedTaskManager.getSimpleTasks();
+        List<Task> subTaskListRestored = fileBackedTaskManagerRestored.getSimpleTasks();
+        for (int i = 0; i < subTaskList.size(); i++) {
+            Assertions.assertEquals(subTaskList.get(i), subTaskListRestored.get(i));
+        }
+
+        // проверяем историю
+        List<Task> history = fileBackedTaskManager.getHistory();
+        List<Task> historyRestored = fileBackedTaskManagerRestored.getHistory();
+        Assertions.assertNull(history);
+        Assertions.assertNull(historyRestored);
     }
 }

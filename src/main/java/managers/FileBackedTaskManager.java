@@ -5,6 +5,8 @@ import tasks.*;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,7 +118,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     // будет сохранять текущее состояние менеджера в указанный файл (file)
     private void save() {
-        String header = "id,type,name,status,description,epic\n";
+        String header = "id,type,name,status,description,date_time,duration,epic\n";
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file))) {
             fileWriter.write(header);
             for (Task task : getSimpleTasks()) {
@@ -147,7 +149,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String result = "";
         // собираем данные, общие для всех задач
         result += task.getId() + "," + task.getTaskType() + "," + task.getName() +
-                "," + task.getStatus() + "," + task.getDescription();
+                "," + task.getStatus() + "," + task.getDescription() + "," + task.getStartTime() + "," + task.getDuration();
         // если передана сабтаска - добавляем ИД её эпика
         if (task.getTaskType() == TaskTypes.SUBTASK) {
             SubTask sub = (SubTask) task;
@@ -160,17 +162,31 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String[] taskData = value.split(",");
         Task task;
         try {
-            // id,type,name,status,description,epic
-            // под это дело создала новый конструктор в Task, принимающий все параметры
+            // id,type,name,status,description,startTime,duration,epic
             if (TaskTypes.valueOf(taskData[1]).equals(TaskTypes.SUBTASK)) {
-                task = new SubTask(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
-                        Status.valueOf(taskData[3]), taskData[4], Long.parseLong(taskData[5]));
+                if (!taskData[5].equals("null")) { // Если не пустая дата старта
+                    task = new SubTask(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
+                            Status.valueOf(taskData[3]), taskData[4], LocalDateTime.parse(taskData[5]), Duration.parse(taskData[6]), Long.parseLong(taskData[7]));
+                } else {
+                    task = new SubTask(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
+                            Status.valueOf(taskData[3]), taskData[4], Long.parseLong(taskData[7]));
+                }
             } else if (TaskTypes.valueOf(taskData[1]).equals(TaskTypes.EPIC)) {
-                task = new EpicTask(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
-                        Status.valueOf(taskData[3]), taskData[4]);
+                if (!taskData[5].equals("null")) { // Если не пустая дата старта
+                    task = new EpicTask(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
+                            Status.valueOf(taskData[3]), taskData[4], LocalDateTime.parse(taskData[5]), Duration.parse(taskData[6]));
+                } else {
+                    task = new EpicTask(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
+                            Status.valueOf(taskData[3]), taskData[4]);
+                }
             } else {
-                task = new Task(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
-                        Status.valueOf(taskData[3]), taskData[4]);
+                if (!taskData[5].equals("null")) { // Если не пустая дата старта
+                    task = new Task(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
+                            Status.valueOf(taskData[3]), taskData[4], LocalDateTime.parse(taskData[5]), Duration.parse(taskData[6]));
+                } else {
+                    task = new Task(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
+                            Status.valueOf(taskData[3]), taskData[4]);
+                }
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -191,7 +207,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         List<Long> result = new ArrayList<>();
         String[] ids = value.split(",");
         for (int i = 0; i < ids.length; i++) {
-            result.add(Long.parseLong(ids[i]));
+            try {
+                result.add(Long.parseLong(ids[i]));
+            } catch (NumberFormatException e) {
+                return result;
+            }
+
         }
         return result;
     }

@@ -10,5 +10,5 @@ public interface HistoryManager {
 
     List<Task> getHistory();
 
-    void remove(Long id); // для удаления задачи из просмотра. По ТЗ ID int, но у нас они все в Long
+    void remove(Long id);
 }
