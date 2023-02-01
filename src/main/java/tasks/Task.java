@@ -9,7 +9,6 @@ public class Task {
     private String description;
     private Long id; // Счётчик countID в TaskManager. Интересно, мы его оставим как счётчик или потом заменим на hash
     private Status status;
-    private TaskTypes taskType = TaskTypes.TASK;
     private Duration duration = null; // в минутах, Duration duration = Duration.ofMinutes(...);
     private LocalDateTime startTime = null;
 
@@ -31,7 +30,6 @@ public class Task {
     //         // id,type,name,status,description
     public Task(Long id, TaskTypes type, String name, Status status, String description) {
         this.id = id;
-        this.taskType = type;
         this.name = name;
         this.status = status;
         this.description = description;
@@ -39,7 +37,6 @@ public class Task {
 
     public Task(Long id, TaskTypes type, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
         this.id = id;
-        this.taskType = type;
         this.name = name;
         this.status = status;
         this.description = description;
@@ -70,11 +67,7 @@ public class Task {
     }
 
     public TaskTypes getTaskType() {
-        return taskType;
-    }
-
-    public void setTaskType(TaskTypes taskType) {
-        this.taskType = taskType;
+        return TaskTypes.TASK;
     }
 
     public Status getStatus() {
@@ -114,12 +107,12 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(name, task.name) && Objects.equals(description, task.description) && Objects.equals(id, task.id) && status == task.status && taskType == task.taskType && Objects.equals(duration, task.duration) && Objects.equals(startTime, task.startTime);
+        return Objects.equals(name, task.name) && Objects.equals(description, task.description) && Objects.equals(id, task.id) && status == task.status && Objects.equals(duration, task.duration) && Objects.equals(startTime, task.startTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, id, status, taskType, duration, startTime);
+        return Objects.hash(name, description, id, status, duration, startTime);
     }
 
     @Override
@@ -129,7 +122,6 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", status=" + status +
-                ", taskType=" + taskType +
                 ", duration=" + duration +
                 ", startTime=" + startTime +
                 '}';

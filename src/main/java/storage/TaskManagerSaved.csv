@@ -1,6 +1,7 @@
 id,type,name,status,description,date_time,duration,epic
-3,EPIC,EpicName2,NEW,Epic2descr,null,null
-5,SUBTASK,SubTask2 in epic2,NEW,some description,null,null,3
-6,SUBTASK,SubTask3 in epic2,NEW,some description,null,null,3
+2,TASK,SimpleTaskName,NEW,SimpleTaskDescription,2023-01-01T12:15,PT30M
+4,EPIC,EpicName2,NEW,Epic2descr,2023-01-01T12:45,PT1H30M
+6,SUBTASK,SubTask2 in epic2,NEW,some description,2023-01-01T13:30,PT30M,4
+7,SUBTASK,SubTask3 in epic2,NEW,some description,2023-01-01T14:00,PT15M,4
 
-3,6,
+2,4,7,

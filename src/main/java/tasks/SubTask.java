@@ -10,7 +10,6 @@ public class SubTask extends Task {
     public SubTask(String name, String description, Long epicId) {
         super(name, description);
         this.epicId = epicId;
-        setTaskType(TaskTypes.SUBTASK);
     }
 
     // Конструктор под восстановление из файла: все поля
@@ -18,14 +17,12 @@ public class SubTask extends Task {
     public SubTask(Long id, TaskTypes type, String name, Status status, String description, Long epicId) {
         super(id, type, name, status, description);
         this.epicId = epicId;
-        setTaskType(TaskTypes.SUBTASK);
     }
 
     // Конструктор для указания времени
     public SubTask(String name, String description, LocalDateTime startTime, Duration duration, Long epicId) {
         super(name, description, startTime, duration);
         this.epicId = epicId;
-        setTaskType(TaskTypes.SUBTASK);
     }
 
     public SubTask(Long id, TaskTypes type, String name, Status status, String description, LocalDateTime startTime, Duration duration, Long epicId) {
@@ -39,5 +36,10 @@ public class SubTask extends Task {
 
     public void setEpicId(Long epicId) {
         this.epicId = epicId;
+    }
+
+    @Override
+    public TaskTypes getTaskType() {
+        return TaskTypes.SUBTASK;
     }
 }

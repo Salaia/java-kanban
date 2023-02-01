@@ -271,7 +271,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        fileBackedTaskManager.restorePriority();
         return fileBackedTaskManager;
+    }
+
+    private void restorePriority() {
+        priority.addAll(simpleTasks.values());
+        priority.addAll(epicTasks.values());
+        priority.addAll(subTasks.values());
     }
 
 } // FileBackedTaskManager

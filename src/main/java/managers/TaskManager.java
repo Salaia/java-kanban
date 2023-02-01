@@ -48,4 +48,6 @@ public interface TaskManager {
 
     void updateSubTask(SubTask subTask);
 
+    List<Task> getPrioritizedTasks();
+
 } // TaskManager

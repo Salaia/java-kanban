@@ -14,8 +14,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Long, Task> simpleTasks;
     protected final Map<Long, EpicTask> epicTasks;
     protected final Map<Long, SubTask> subTasks;
-    private final TreeSet<Task> priority; // хранит все таски С УСТАНОВЛЕННЫМ ВРЕМЕНЕМ в порядке приоритета - времени начала
-    private final List<Task> priorityTail; // для тасок без времени
+    // замечания - перед тем, как добавить в TreeSet объект с измененным состоянием - его надо сначала удалить.
+    protected final TreeSet<Task> priority; // хранит все таски С УСТАНОВЛЕННЫМ ВРЕМЕНЕМ в порядке приоритета - времени начала
     private final HistoryManager historyManager = Managers.getDefaultHistory();
     private Map<LocalDateTime, Boolean> schedule;
 
@@ -26,7 +26,6 @@ public class InMemoryTaskManager implements TaskManager {
         epicTasks = new HashMap<>();
         subTasks = new HashMap<>();
         priority = new TreeSet<>((Task task1, Task task2) -> task1.getStartTime().compareTo(task2.getStartTime()));
-        priorityTail = new ArrayList<>();
         createSchedule();
     }
 
@@ -58,6 +57,13 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllSimpleTasks() {
         if (!simpleTasks.isEmpty()) {
             simpleTasks.clear();
+
+            TreeSet<Task> checkList = new TreeSet<>(priority);
+            for (Task task : checkList) {
+                if (task.getTaskType().equals(TaskTypes.TASK)) {
+                    priority.remove(task);
+                }
+            }
         }
     }
 
@@ -66,6 +72,13 @@ public class InMemoryTaskManager implements TaskManager {
         if (!epicTasks.isEmpty()) {
             subTasks.clear();
             epicTasks.clear();
+
+            TreeSet<Task> checkList = new TreeSet<>(priority);
+            for (Task task : checkList) {
+                if (!task.getTaskType().equals(TaskTypes.TASK)) {
+                    priority.remove(task);
+                }
+            }
         }
     }
 
@@ -78,17 +91,26 @@ public class InMemoryTaskManager implements TaskManager {
                 epic.setStatus(Status.NEW); // Без сабтасок эпики теперь пустые, и статус у них должен быть "новый"
                 countEpicDuration(epic.getId());
             }
+
+            TreeSet<Task> checkList = new TreeSet<>(priority);
+            for (Task task : checkList) {
+                if (task.getTaskType().equals(TaskTypes.SUBTASK)) {
+                    priority.remove(task);
+                }
+            }
         }
     }
 
     @Override
     public void deleteSimpleTask(Long id) {
+        priority.remove(getSimpleTaskByIdOrNull(id));
         simpleTasks.remove(id);
         historyManager.remove(id);
     } // deleteSimpleTask
 
     @Override
     public void deleteEpicTask(Long id) {
+        priority.remove(getEpicTaskByIdOrNull(id));
         Map<Long, SubTask> copySubtasks = new HashMap<>(subTasks);
         for (SubTask subTask : copySubtasks.values()) {
             if (Objects.equals(subTask.getEpicId(), id)) {
@@ -102,6 +124,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteSubTask(Long id) {
+        priority.remove(getSubTaskByIdOrNull(id));
         Long epicId = subTasks.get(id).getEpicId();
         epicTasks.get(epicId).getSubTasksIds().remove(id); // удаляет сабтаску из списка внутри её эпика
         subTasks.remove(id);
@@ -328,7 +351,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         List<SubTask> subsOfThisEpic = getAllSubTasksOfEpicOrNull(epicId);
         for (SubTask sub : subsOfThisEpic) {
-            if (epic.getStartTime() == null && sub.getStartTime() == null) {
+            if (sub.getDuration() == null && sub.getStartTime() == null) {
                 break;
             } else if (endTime == null && sub.getDuration() != null && sub.getStartTime() != null) {
                 startTime = sub.getStartTime();
@@ -354,7 +377,6 @@ public class InMemoryTaskManager implements TaskManager {
     //
     public List<Task> getPrioritizedTasks() {
         List<Task> result = new ArrayList<>(priority);
-        result.addAll(priorityTail);
         return result;
     }
 
@@ -373,10 +395,7 @@ public class InMemoryTaskManager implements TaskManager {
     private boolean fastCollisionCheck(Task task) {
         boolean isCollision = false;
         if (task.getStartTime() == null && task.getDuration() == null) {
-            if (!priorityTail.contains(task)) {
-                priorityTail.add(task);
-            }
-            return false; // время не установлено - добавили в конец и разрешили
+            return false; // время не установлено - разрешили
         }
 
         LocalDateTime checkTime = task.getStartTime();

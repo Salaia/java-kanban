@@ -7,11 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/*
-    Наверное, все эти сценарии уже были в моих предыдущих тестах,
-    но здесь то, что требуется по ТЗ 7
- */
-
 class EpicTaskTest {
 
     TaskManager manager = Managers.getDefault();
