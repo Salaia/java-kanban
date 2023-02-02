@@ -110,7 +110,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteEpicTask(Long id) {
-        priority.remove(getEpicTaskByIdOrNull(id));
         Map<Long, SubTask> copySubtasks = new HashMap<>(subTasks);
         for (SubTask subTask : copySubtasks.values()) {
             if (Objects.equals(subTask.getEpicId(), id)) {
@@ -136,7 +135,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getSimpleTaskByIdOrNull(Long id) { // вызывать через if (!=null) !!!
         if (!simpleTasks.containsKey(id)) {
-            System.out.println(id + " ID not found (simple)");
             return null;
         } else {
             historyManager.add(simpleTasks.get(id));
@@ -147,7 +145,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public EpicTask getEpicTaskByIdOrNull(Long id) { // вызывать через if (!=null) !!!
         if (!epicTasks.containsKey(id)) {
-            System.out.println(id + "ID not found (epic)");
             return null;
         } else {
             historyManager.add(epicTasks.get(id));
@@ -158,7 +155,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask getSubTaskByIdOrNull(Long id) { // вызывать через if (!=null) !!!
         if (!subTasks.containsKey(id)) {
-            System.out.println(id + "ID not found (subtask)");
             return null;
         } else {
             historyManager.add(subTasks.get(id));
@@ -185,14 +181,12 @@ public class InMemoryTaskManager implements TaskManager {
         // Проверка: не записана ли уже такая таска
         for (Task taskIterated : simpleTasks.values()) {
             if (taskIterated.equals(task)) {
-                System.out.println("Такая задача уже существует. Task id: " + task.getId());
                 break;
             }
         }
 
         // Проверка: не занято ли время, на которое претендует таска
         if (fastCollisionCheck(task)) {
-            System.out.println("Time collision! Task id: " + task.getId());
             return null;
         }
 
@@ -208,14 +202,12 @@ public class InMemoryTaskManager implements TaskManager {
         // Проверка: не записана ли уже такая таска
         for (EpicTask taskIterated : epicTasks.values()) {
             if (taskIterated.equals(epicTask)) {
-                System.out.println("Такая задача уже существует. Task id: " + epicTask.getId());
                 break;
             }
         }
 
         // Проверка: не занято ли время, на которое претендует таска
         if (fastCollisionCheck(epicTask)) {
-            System.out.println("Time collision! " + epicTask.getId());
             return null;
         }
 
@@ -230,18 +222,15 @@ public class InMemoryTaskManager implements TaskManager {
     public Long recordSubTask(SubTask subTask) {
         // Проверка: не занято ли время, на которое претендует таска
         if (fastCollisionCheck(subTask)) {
-            System.out.println("Time collision! Subtask: " + subTask.getId());
             return null;
         }
 
         // Проверка: не записана ли уже такая таска
         for (SubTask taskIterated : subTasks.values()) {
             if (taskIterated.equals(subTask)) {
-                System.out.println("Такая задача уже существует.");
                 break;
             }
             if (!epicTasks.containsKey(subTask.getEpicId())) { // Не знаю, возможна ли попытка добавления подзадачи до создания эпика
-                System.out.println("Для добавления подзадачи необходимо сначала создать задачу типа epic");
                 break;
             }
         }
@@ -276,6 +265,26 @@ public class InMemoryTaskManager implements TaskManager {
     // update записывает новый (переданный) объект на место старого, по ID
     @Override
     public void updateSimpleTask(Task task) {
+        if (task.getStartTime() != null) {
+            Task taskReserved = getSimpleTaskByIdOrNull(task.getId());
+            LocalDateTime checkTime = taskReserved.getStartTime();
+            // освободить место предыдущей версии этой таски в расписании
+            while (checkTime.isBefore(taskReserved.getEndTime())) {
+                schedule.put(checkTime, false);
+                checkTime = checkTime.plusMinutes(15);
+            }
+
+            if (fastCollisionCheck(task)) {
+                // если не удалось записать новую версию, в расписании восстановить бронь под старую
+                checkTime = taskReserved.getStartTime();
+                while (checkTime.isBefore(taskReserved.getEndTime())) {
+                    schedule.put(checkTime, true);
+                    checkTime = checkTime.plusMinutes(15);
+                }
+
+                return;
+            }
+        }
         simpleTasks.replace(task.getId(), task);
     } // updateSimpleTask
 
@@ -286,6 +295,26 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubTask(SubTask subTask) {
+        if (subTask.getStartTime() != null) {
+            SubTask subReserved = getSubTaskByIdOrNull(subTask.getId());
+            LocalDateTime checkTime = subReserved.getStartTime();
+            // освободить место предыдущей версии этой таски в расписании
+            while (checkTime.isBefore(subReserved.getEndTime())) {
+                schedule.put(checkTime, false);
+                checkTime = checkTime.plusMinutes(15);
+            }
+
+            if (fastCollisionCheck(subTask)) {
+                // если не удалось записать новую версию, в расписании восстановить бронь под старую
+                checkTime = subReserved.getStartTime();
+                while (checkTime.isBefore(subReserved.getEndTime())) {
+                    schedule.put(checkTime, true);
+                    checkTime = checkTime.plusMinutes(15);
+                }
+
+                return;
+            }
+        }
         subTasks.replace(subTask.getId(), subTask);
         updateEpicStatus(subTask.getEpicId());
         countEpicDuration(subTask.getEpicId());
@@ -374,7 +403,6 @@ public class InMemoryTaskManager implements TaskManager {
         return duration;
     } // countEpicDuration
 
-    //
     public List<Task> getPrioritizedTasks() {
         List<Task> result = new ArrayList<>(priority);
         return result;

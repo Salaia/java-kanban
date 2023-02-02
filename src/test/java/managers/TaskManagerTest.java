@@ -2,10 +2,7 @@ package managers;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import tasks.EpicTask;
-import tasks.SubTask;
-import tasks.Task;
-import tasks.TaskTypes;
+import tasks.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -32,8 +29,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     protected LocalDateTime initialTime;
 
-
-    //TODO у меня collision проверяет по 15 минут, когда задаёшь не кратное время - всё рушится
     protected void initTasks() {
         initialTime = LocalDateTime.of(2023, Month.JANUARY, 1, 12, 0);
 
@@ -60,30 +55,58 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @AfterEach
     void afterEach() {
-        //проверка, что у все сабтаски привязаны к своим эпикам
-        for (SubTask sub : taskManager.getSubTasks()) {
-            assertNotNull(sub.getEpicId());
-        }
+        taskManager.deleteAllSimpleTasks();
+        taskManager.deleteAllEpicTasks();
     }
 
     @Test
     void getHistory() {
-        assertNotNull(taskManager.getHistory());
+        List<Task> checkHistory = new ArrayList<>();
+        checkHistory.add(taskManager.getSimpleTasks().get(1));
+        checkHistory.add(taskManager.getEpicTasks().get(1));
+        checkHistory.add(taskManager.getSubTasks().get(2));
+        checkHistory.add(taskManager.getSimpleTasks().get(0));
+
+        for (int i = 0; i < 4; i++) {
+            assertEquals(checkHistory.get(i), taskManager.getHistory().get(i));
+        }
     }
 
     @Test
     void getSimpleTasks() {
-        assertNotNull(taskManager.getSimpleTasks());
+        List<Task> checkTasks = new ArrayList<>();
+        checkTasks.add(taskManager.getSimpleTasks().get(0));
+        checkTasks.add(taskManager.getSimpleTasks().get(1));
+        for (int i = 0; i < checkTasks.size(); i++) {
+            assertEquals(checkTasks.get(i), taskManager.getSimpleTasks().get(i));
+        }
+
     }
 
     @Test
     void getEpicTasks() {
-        assertNotNull(taskManager.getEpicTasks());
+        List<Task> checkTasks = new ArrayList<>();
+        checkTasks.add(taskManager.getEpicTasks().get(0));
+        checkTasks.add(taskManager.getEpicTasks().get(1));
+        for (int i = 0; i < checkTasks.size(); i++) {
+            assertEquals(checkTasks.get(i), taskManager.getEpicTasks().get(i));
+        }
     }
 
     @Test
     void getSubTasks() {
-        assertNotNull(taskManager.getSubTasks());
+        List<Task> checkTasks = new ArrayList<>();
+        for (int i = 0; i < taskManager.getSubTasks().size(); i++) {
+            checkTasks.add(taskManager.getSubTasks().get(i));
+        }
+        for (int i = 0; i < checkTasks.size(); i++) {
+            assertEquals(checkTasks.get(i), taskManager.getSubTasks().get(i));
+        }
+
+        //проверка, что у все сабтаски привязаны к своим эпикам
+        for (SubTask sub : taskManager.getSubTasks()) {
+            assertNotNull(sub.getEpicId());
+        }
     }
 
     @Test
@@ -133,49 +156,46 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getSimpleTaskByIdOrNull() {
-        assertEquals(TaskTypes.TASK, taskManager.getSimpleTaskByIdOrNull(task1ID).getTaskType());
+        Task checkTask = new Task(task1ID, TaskTypes.TASK, "SimpleTaskName", Status.NEW, "SimpleTaskDescription", initialTime, Duration.ofMinutes(15));
+        assertEquals(checkTask, taskManager.getSimpleTaskByIdOrNull(task1ID));
     }
 
     @Test
     void getEpicTaskByIdOrNull() {
-        assertEquals(TaskTypes.EPIC, taskManager.getEpicTaskByIdOrNull(epic1ID).getTaskType());
+        EpicTask epic = new EpicTask(epic1ID, TaskTypes.EPIC, "EpicName1", Status.NEW, "Epic1descr", LocalDateTime.of(2023, Month.JANUARY, 1, 14, 15), Duration.ofMinutes(75));
+        assertEquals(epic, taskManager.getEpicTaskByIdOrNull(epic1ID));
     }
 
     @Test
     void getSubTaskByIdOrNull() {
-        assertEquals(TaskTypes.SUBTASK, taskManager.getSubTaskByIdOrNull(subTask1InEpic2).getTaskType());
+        SubTask checkSub = new SubTask(subTask1InEpic2, TaskTypes.SUBTASK, "SubTask1 in epic2", Status.NEW, "some description", initialTime.plusMinutes(45), Duration.ofMinutes(45), epic2ID);
+        assertEquals(checkSub, taskManager.getSubTaskByIdOrNull(subTask1InEpic2));
     }
 
     @Test
     void getAllSubTasksOfEpicOrNull() {
-        assertNotNull(taskManager.getAllSubTasksOfEpicOrNull(epic1ID));
-        taskManager.deleteEpicTask(epic1ID);
-        assertNull(taskManager.getAllSubTasksOfEpicOrNull(epic1ID));
+        List<SubTask> checkList = new ArrayList<>(taskManager.getAllSubTasksOfEpicOrNull(epic1ID));
+        for (int i = 0; i < checkList.size(); i++) {
+            assertEquals(checkList.get(i), taskManager.getAllSubTasksOfEpicOrNull(epic1ID).get(i));
+        }
     }
 
     @Test
     void recordSimpleTask() {
-        assertEquals(2, taskManager.getSimpleTasks().size());
-        Long newTaskId = taskManager.recordSimpleTask(new Task("n", "d", initialTime.plusDays(10), Duration.ofMinutes(120)));
-        assertEquals(3, taskManager.getSimpleTasks().size());
-        assertTrue(taskManager.getSimpleTasks().contains(taskManager.getSimpleTaskByIdOrNull(newTaskId)));
-        taskManager.deleteSimpleTask(newTaskId);
+        Task checkTask = new Task(task1ID, TaskTypes.TASK, "SimpleTaskName", Status.NEW, "SimpleTaskDescription", initialTime, Duration.ofMinutes(15));
+        assertEquals(checkTask, taskManager.getSimpleTaskByIdOrNull(task1ID));
     }
 
     @Test
     void recordEpicTask() {
-        assertEquals(2, taskManager.getEpicTasks().size());
-        Long newEpic = taskManager.recordEpicTask(new EpicTask("n", "d"));
-        assertEquals(3, taskManager.getEpicTasks().size());
-        assertTrue(taskManager.getEpicTasks().contains(taskManager.getEpicTaskByIdOrNull(newEpic)));
+        EpicTask epic = new EpicTask(epic1ID, TaskTypes.EPIC, "EpicName1", Status.NEW, "Epic1descr", LocalDateTime.of(2023, Month.JANUARY, 1, 14, 15), Duration.ofMinutes(75));
+        assertEquals(epic, taskManager.getEpicTaskByIdOrNull(epic1ID));
     }
 
     @Test
     void recordSubTask() {
-        assertEquals(7, taskManager.getSubTasks().size());
-        Long newSubId = taskManager.recordSubTask(new SubTask("n", "d", epic1ID));
-        assertEquals(8, taskManager.getSubTasks().size());
-        assertTrue(taskManager.getSubTasks().contains(taskManager.getSubTaskByIdOrNull(newSubId)));
+        SubTask checkSub = new SubTask(subTask1InEpic2, TaskTypes.SUBTASK, "SubTask1 in epic2", Status.NEW, "some description", initialTime.plusMinutes(45), Duration.ofMinutes(45), epic2ID);
+        assertEquals(checkSub, taskManager.getSubTaskByIdOrNull(subTask1InEpic2));
     }
 
     @Test
@@ -207,11 +227,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getPrioritizedTasks() {
-        TreeSet<Task> checkTree = new TreeSet<>((Task task1, Task task2) -> task1.getStartTime().compareTo(task2.getStartTime()));
+        // Старый вариант в сторонке сохранила :)
+        TreeSet<Task> checkTree = new TreeSet<>(Comparator.comparing(Task::getStartTime));
         checkTree.addAll(taskManager.getPrioritizedTasks());
-        Task[] checkArray = checkTree.toArray(checkTree.toArray(new Task[0]));
-        Task[] checkArray2 = taskManager.getPrioritizedTasks().toArray(checkTree.toArray(new Task[0]));
-        assertArrayEquals(checkArray, checkArray2);
+        List<Task> expected = new ArrayList(checkTree);
+        List<Task> actual = taskManager.getPrioritizedTasks();
+        assertEquals(expected, actual);
     }
 
     @Test
