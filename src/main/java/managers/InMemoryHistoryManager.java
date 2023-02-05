@@ -54,7 +54,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private List<Task> getTasks() {
         if (history.isEmpty()) {
-            return null; // нужно в FileBackedTaskManager для проверки сохранять ли историю в файл или NullPointer настигнет вас
+            return new ArrayList<>(); // null was here
         }
         List<Task> result = new ArrayList<>();
         Node currentNode = head;

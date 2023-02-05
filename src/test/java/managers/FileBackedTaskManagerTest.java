@@ -97,7 +97,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         // проверяем историю
         List<Task> history = fileBackedTaskManager.getHistory();
         List<Task> historyRestored = fileBackedTaskManagerRestored.getHistory();
-        Assertions.assertNull(history);
-        Assertions.assertNull(historyRestored);
+        Assertions.assertEquals(0, history.size());
+        Assertions.assertEquals(0, historyRestored.size());
     }
 }

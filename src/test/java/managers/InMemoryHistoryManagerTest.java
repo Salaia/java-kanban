@@ -26,7 +26,7 @@ class InMemoryHistoryManagerTest extends HistoryManagerTest<InMemoryHistoryManag
         Long subTask1InEpic2 = taskManager.recordSubTask(new SubTask("SubTask1 in epic2", "some description", epic2ID));
         Long subTask2InEpic2 = taskManager.recordSubTask(new SubTask("SubTask2 in epic2", "some description", epic2ID));
         Long subTask3InEpic2 = taskManager.recordSubTask(new SubTask("SubTask3 in epic2", "some description", epic2ID));
-        Assertions.assertNull(taskManager.getHistory()); // не пустая история, а null нужно в FileBackedTaskManager для проверки сохранять ли историю в файл или NullPointer настигнет вас
+        Assertions.assertEquals(0, taskManager.getHistory().size()); // не пустая история, а null нужно в FileBackedTaskManager для проверки сохранять ли историю в файл или NullPointer настигнет вас
 
         taskManager.getSimpleTaskByIdOrNull(taskID);
         Assertions.assertEquals(1, taskManager.getHistory().size());

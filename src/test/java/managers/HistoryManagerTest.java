@@ -41,7 +41,7 @@ abstract class HistoryManagerTest<T extends HistoryManager> {
         Task simpleTaskId4 = new Task(4L, TaskTypes.TASK, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=4)");
         historyManager.remove(0L);
         final List<Task> emptyHistory = historyManager.getHistory();
-        assertNull(emptyHistory, "История не пустая.");
+        assertEquals(0, emptyHistory.size(), "История не пустая.");
         historyManager.add(simpleTaskId1);
         historyManager.add(simpleTaskId2);
         historyManager.add(simpleTaskId3);
@@ -65,12 +65,12 @@ abstract class HistoryManagerTest<T extends HistoryManager> {
         assertEquals(removedLastHistorySize1.get(0), fullHistorySize4.get(2), "Удалена неверная задача.");
         historyManager.remove(simpleTaskId3.getId());
         final List<Task> removedAllHistory = historyManager.getHistory();
-        assertNull(removedAllHistory, "История не пустая.");
+        assertEquals(0, removedAllHistory.size(), "История не пустая.");
     }
 
     @Test
     void getHistory() {
-        assertNull(historyManager.getHistory(), "История не пустая.");
+        assertEquals(0, historyManager.getHistory().size(), "История не пустая.");
         Task simpleTaskId1 = new Task(1L, TaskTypes.TASK, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=1)");
         historyManager.add(simpleTaskId1);
         final List<Task> history = historyManager.getHistory();
