@@ -212,7 +212,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             } catch (NumberFormatException e) {
                 return result;
             }
-
         }
         return result;
     }
@@ -276,9 +275,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private void restorePriority() {
-        priority.addAll(simpleTasks.values());
-        priority.addAll(epicTasks.values());
-        priority.addAll(subTasks.values());
+        for (Task task : simpleTasks.values()) {
+            if (task.getStartTime() != null && task.getDuration() != null) {
+                priority.add(task);
+            }
+        }
+
+        for (SubTask sub : subTasks.values()) {
+            if (sub.getStartTime() != null && sub.getDuration() != null) {
+                priority.add(sub);
+            }
+        }
     }
 
 } // FileBackedTaskManager

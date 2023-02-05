@@ -44,6 +44,14 @@ public class Task {
         this.duration = duration;
     }
 
+    // конструктор под тестирование
+    public Task(Long id, String name, String description) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+    }
+
+
     public LocalDateTime getEndTime() {
         // start + duration
         LocalDateTime finish = startTime.plus(duration);

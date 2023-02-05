@@ -10,7 +10,7 @@ import tasks.Task;
 import java.util.HashSet;
 import java.util.Set;
 
-class InMemoryHistoryManagerTest {
+class InMemoryHistoryManagerTest extends HistoryManagerTest<InMemoryHistoryManager> {
     static TaskManager taskManager;
 
     @BeforeEach
@@ -19,7 +19,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void getHistory() {
+    void getHistoryThroughTaskManager() {
         Long taskID = taskManager.recordSimpleTask(new Task("SimpleTaskName", "SimpleTaskDescription"));
         Long epic1ID = taskManager.recordEpicTask(new EpicTask("EpicName1", "Epic1descr"));
         Long epic2ID = taskManager.recordEpicTask(new EpicTask("EpicName2", "Epic2descr"));
@@ -53,7 +53,6 @@ class InMemoryHistoryManagerTest {
         // Другие выжили
         Assertions.assertTrue(taskManager.getHistory().contains(taskManager.getEpicTaskByIdOrNull(epic1ID)));
         Assertions.assertTrue(taskManager.getHistory().contains(taskManager.getSimpleTaskByIdOrNull(taskID)));
-
     }
 
     @Test
@@ -91,7 +90,6 @@ class InMemoryHistoryManagerTest {
         Set<Task> historySet = new HashSet<>(taskManager.getHistory());
         Assertions.assertEquals(historySet.size(), taskManager.getHistory().size());
 
-
         // remove simple task
         taskManager.deleteSimpleTask(task1);
         Assertions.assertFalse(taskManager.getHistory().contains(taskManager.getSimpleTaskByIdOrNull(task1)));
@@ -104,5 +102,4 @@ class InMemoryHistoryManagerTest {
         Set<Task> historySet1 = new HashSet<>(taskManager.getHistory());
         Assertions.assertEquals(historySet1.size(), taskManager.getHistory().size());
     }
-
 }

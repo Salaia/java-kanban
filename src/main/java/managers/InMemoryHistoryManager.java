@@ -103,5 +103,4 @@ public class InMemoryHistoryManager implements HistoryManager {
             this.prev = prev;
         } // Конструктор
     } // class Node
-
 }

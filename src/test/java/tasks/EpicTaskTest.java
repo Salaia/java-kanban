@@ -75,5 +75,4 @@ class EpicTaskTest {
         assertEquals(Status.IN_PROGRESS, manager.getSubTaskByIdOrNull(sub1Id).getStatus());
         assertEquals(Status.IN_PROGRESS, manager.getSubTaskByIdOrNull(sub2Id).getStatus());
     }
-
 }
