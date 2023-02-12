@@ -1,6 +1,5 @@
 package managers;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tasks.*;
 
@@ -60,8 +59,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 new SubTask("Third SubTask", "SubTask(ID=7) of first EpicTask(ID=6) without DateTime", epicTaskId6));
     }
 
-    @AfterEach
-    void afterEach() {
+    protected void clearManager() {
         taskManager.deleteAllSimpleTasks();
         taskManager.deleteAllEpicTasks();
     }
@@ -111,7 +109,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void updateSimpleTaskSuccessfulUpdateSimpleTaskWithDateTime() {
         taskManager.deleteSimpleTask(simpleTaskId1);
-        Task expectedSimpleTask = new Task(simpleTaskId2, TaskTypes.TASK, "Second SimpleTask",
+        Task expectedSimpleTask = new Task(simpleTaskId2, TaskTypes.TASK, "Second SimpleTask updated",
                 Status.IN_PROGRESS, "SimpleTask(ID=2) with DateTime", testStartTime1Plus15m, duration10H);
         taskManager.updateSimpleTask(expectedSimpleTask);
         final Task updatedSimpleTask = taskManager.getSimpleTaskByIdOrNull(simpleTaskId2);

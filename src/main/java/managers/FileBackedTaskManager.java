@@ -4,6 +4,7 @@ import exceptions.ManagerSaveException;
 import tasks.*;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -17,6 +18,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     // Конструктор
     public FileBackedTaskManager(File file) {
         this.file = file;
+    }
+
+    public FileBackedTaskManager(URL url) {
+        Managers.getDefaultHttp();
     }
 
     @Override
@@ -117,7 +122,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     // будет сохранять текущее состояние менеджера в указанный файл (file)
-    private void save() {
+    protected void save() {
         String header = "id,type,name,status,description,date_time,duration,epic\n";
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file))) {
             fileWriter.write(header);
@@ -220,8 +225,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
         try (BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
-            String fileString = Files.readString(file.toPath());
-            String[] fileLines = fileString.split("\n");
+            String fileString = Files.readString(file.toPath()); //записали весь файл в 1 строку
+            String[] fileLines = fileString.split("\n"); //разбили на массив построчно
 
             //!fileLines[i].isBlank() // пока не дойдём до пустой строки-разделителя
             for (int i = 1; i < fileLines.length && !fileLines[i].isBlank(); i++) { // первая строка - шапка, её пропускаем
@@ -274,17 +279,25 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return fileBackedTaskManager;
     }
 
-    private void restorePriority() {
+    protected void restorePriority() {
         for (Task task : simpleTasks.values()) {
             if (task.getStartTime() != null && task.getDuration() != null) {
                 priority.add(task);
+            } else {
+                priorityTailIds.add(task.getId());
             }
         }
 
         for (SubTask sub : subTasks.values()) {
             if (sub.getStartTime() != null && sub.getDuration() != null) {
                 priority.add(sub);
+            } else {
+                priorityTailIds.add(sub.getId());
             }
+        }
+
+        for (EpicTask epicTask : epicTasks.values()) {
+            priorityTailIds.add(epicTask.getId());
         }
     }
 

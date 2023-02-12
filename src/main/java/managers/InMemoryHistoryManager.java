@@ -20,6 +20,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         return getTasks();
     }
 
+    @Override
+    public void updateHistory(Task task) {
+        Node node = history.get(task.getId());
+        node.data = task;
+    }
+
     // Добавляет просмотренные задачи в историю просмотров
     @Override
     public void add(Task task) {
