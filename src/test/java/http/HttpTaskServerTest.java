@@ -140,7 +140,7 @@ class HttpTaskServerTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Long id = 0L;
+        Long id;
         if (response.statusCode() == 200) {
             JsonElement jsonElementBody = JsonParser.parseString(response.body());
             if (!jsonElementBody.isJsonObject()) {
@@ -162,7 +162,7 @@ class HttpTaskServerTest {
 
     @Test
     void postTasksTaskIdSuccessPostOfUpdatedSimpleTaskID2() throws InterruptedException, IOException {
-        final Task expectedTask = new Task(simpleTaskId2, TaskTypes.TASK, "Second SimpleTask",
+        final Task expectedTask = new Task(simpleTaskId2, "Second SimpleTask",
                 Status.IN_PROGRESS, "SimpleTask(Id=2) with DateTime", testStartTime1Plus15m, duration10H);
         String json = gson.toJson(expectedTask);
         final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
@@ -216,7 +216,7 @@ class HttpTaskServerTest {
     }
 
     @Test
-    void deleteTasksTaskSuccessfuldeleteAllSimpleTasks() throws InterruptedException, IOException {
+    void deleteTasksTaskSuccessfulDeleteAllSimpleTasks() throws InterruptedException, IOException {
         final List<Task> listContainsTasks = taskManager.getSimpleTasks();
         assertNotNull(listContainsTasks, "Задачи изначально отсутствуют.");
         URI url = URI.create("http://localhost:8080/tasks/task");
@@ -257,7 +257,7 @@ class HttpTaskServerTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Long id = 0L;
+        Long id;
         if (response.statusCode() == 200) {
             JsonElement jsonElementBody = JsonParser.parseString(response.body());
             if (!jsonElementBody.isJsonObject()) {
@@ -278,7 +278,7 @@ class HttpTaskServerTest {
 
     @Test
     void postTasksSubTaskIdSuccessPostOfUpdatedSubTaskID4() throws InterruptedException, IOException {
-        final SubTask expectedTask = new SubTask(subTaskId4, TaskTypes.SUBTASK, "First SubTask", Status.IN_PROGRESS,
+        final SubTask expectedTask = new SubTask(subTaskId4, "First SubTask", Status.IN_PROGRESS,
                 "SubTask(Id=4) of first EpicTask(Id=3) with DateTime", testStartTime2Plus15m, duration2H, epicTaskId3);
         String json = gson.toJson(expectedTask);
         final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
@@ -372,7 +372,7 @@ class HttpTaskServerTest {
         HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        Long id = 0L;
+        Long id;
         if (response.statusCode() == 200) {
             JsonElement jsonElementBody = JsonParser.parseString(response.body());
             if (!jsonElementBody.isJsonObject()) {
@@ -462,7 +462,7 @@ class HttpTaskServerTest {
     }
 
     @Test
-    void getTasksSubTaskEpicIdSuccessgetAllSubTasksOfEpicOrNullId3() throws InterruptedException, IOException {
+    void getTasksSubTaskEpicIdSuccessGetAllSubTasksOfEpicOrNullId3() throws InterruptedException, IOException {
         final List<SubTask> expectedTasks = taskManager.getAllSubTasksOfEpicOrNull(epicTaskId3);
         URI url = URI.create("http://localhost:8080/tasks/subtask/epic?id=" + epicTaskId3);
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();

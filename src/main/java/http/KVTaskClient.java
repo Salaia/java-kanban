@@ -23,8 +23,6 @@ public class KVTaskClient {
     При регистрации выдаётся токен (API_TOKEN), который нужен при работе с сервером.
      */
     public KVTaskClient(String url) {
-        int port = 8078;
-        url = "http://localhost:" + port + "/";
         this.url = url;
         apiToken = register(url);
     } // Конструктор
@@ -47,7 +45,7 @@ public class KVTaskClient {
         }
     } // register
 
-    // должен сохранять состояние менеджера задач через
+    // Должен сохранять состояние менеджера задач через
     // запрос POST /save/<ключ>?API_TOKEN=. (высылает серверу)
     public void put(String key, String value) { // value in JSON
         try {

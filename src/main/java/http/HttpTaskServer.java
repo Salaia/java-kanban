@@ -21,7 +21,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class HttpTaskServer {
     public static final int PORT = 8080; // KVServer 8078 - должны отличаться
     private final HttpServer server;
-    private Gson gson;
+    private final Gson gson;
 
     private final TaskManager taskManager;
 

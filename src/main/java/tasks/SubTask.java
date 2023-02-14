@@ -14,8 +14,8 @@ public class SubTask extends Task {
 
     // Конструктор под восстановление из файла: все поля
     //         // id,type,name,status,description,epic
-    public SubTask(Long id, TaskTypes type, String name, Status status, String description, Long epicId) {
-        super(id, type, name, status, description);
+    public SubTask(Long id, String name, Status status, String description, Long epicId) {
+        super(id, name, status, description);
         this.epicId = epicId;
     }
 
@@ -25,17 +25,13 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
-    public SubTask(Long id, TaskTypes type, String name, Status status, String description, LocalDateTime startTime, Duration duration, Long epicId) {
-        super(id, type, name, status, description, startTime, duration);
+    public SubTask(Long id, String name, Status status, String description, LocalDateTime startTime, Duration duration, Long epicId) {
+        super(id, name, status, description, startTime, duration);
         this.epicId = epicId;
     }
 
     public Long getEpicId() {
         return epicId;
-    }
-
-    public void setEpicId(Long epicId) {
-        this.epicId = epicId;
     }
 
     @Override

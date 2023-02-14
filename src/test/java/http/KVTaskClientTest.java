@@ -104,13 +104,15 @@ class KVTaskClientTest {
         ArrayList<EpicTask> epics = gson.fromJson(kvTaskClient.load("epics"),
                 new TypeToken<ArrayList<EpicTask>>() {
                 }.getType());
-        // История хранится по айдишникам, а сравнивать надо с листом тасок, так что тут на операцию больше
+        // История хранится по id, а сравнивать надо с листом тасок, так что тут на операцию больше
         ArrayList<Long> historyIds = gson.fromJson(kvTaskClient.load("history"),
                 new TypeToken<ArrayList<Long>>() {
                 }.getType());
         List<Task> historyTasks = new ArrayList<>();
         for (Long id : historyIds) {
-            historyTasks.add(taskManager.findTask(id)); // метод findTask пришлось сделать публичным
+            if (taskManager.findTask(id) != null) {
+                historyTasks.add(taskManager.findTask(id)); // метод findTask пришлось сделать публичным
+            }
         }
 
         assertEquals(tasks, taskManager.getSimpleTasks(), "Коллекции тасок не равны!");
@@ -136,20 +138,22 @@ class KVTaskClientTest {
                 }.getType());
         List<Task> historyTasksOld = new ArrayList<>();
         for (Long id : historyIdsOld) {
-            historyTasksOld.add(taskManager.findTask(id));
+            if (taskManager.findTask(id) != null) {
+                historyTasksOld.add(taskManager.findTask(id));
+            }
         }
 
         // Обновляем по таске каждого типа
         Task taskOld = taskManager.getSimpleTaskByIdOrNull(simpleTaskId1);
-        Task taskForUpdate = new Task(simpleTaskId1, taskOld.getTaskType(), "New name(simpleTaskId1)",
+        Task taskForUpdate = new Task(simpleTaskId1, "New name(simpleTaskId1)",
                 taskOld.getStatus(), "New description");
         taskManager.updateSimpleTask(taskForUpdate);
         SubTask subTaskOld = taskManager.getSubTaskByIdOrNull(subTaskId7);
-        SubTask subTaskForUpdate = new SubTask(subTaskId7, subTaskOld.getTaskType(), "New name(subTaskId5)",
+        SubTask subTaskForUpdate = new SubTask(subTaskId7, "New name(subTaskId5)",
                 subTaskOld.getStatus(), "New description", epicTaskId6);
         taskManager.updateSubTask(subTaskForUpdate);
         EpicTask epicTaskOld = taskManager.getEpicTaskByIdOrNull(epicTaskId6);
-        EpicTask epicTaskForUpdate = new EpicTask(epicTaskId6, epicTaskOld.getTaskType(), "New name (epicTaskId3)",
+        EpicTask epicTaskForUpdate = new EpicTask(epicTaskId6, "New name (epicTaskId3)",
                 epicTaskOld.getStatus(), "New description");
         taskManager.updateEpicTask(epicTaskForUpdate);
 
@@ -163,13 +167,15 @@ class KVTaskClientTest {
         ArrayList<EpicTask> epics = gson.fromJson(kvTaskClient.load("epics"),
                 new TypeToken<ArrayList<EpicTask>>() {
                 }.getType());
-        // История хранится по айдишникам, а сравнивать надо с листом тасок, так что тут на операцию больше
+        // История хранится по id, а сравнивать надо с листом тасок, так что тут на операцию больше
         ArrayList<Long> historyIds = gson.fromJson(kvTaskClient.load("history"),
                 new TypeToken<ArrayList<Long>>() {
                 }.getType());
         List<Task> historyTasks = new ArrayList<>();
         for (Long id : historyIds) {
-            historyTasks.add(taskManager.findTask(id)); // метод findTask пришлось сделать публичным
+            if ((taskManager.findTask(id)) != null) {
+                historyTasks.add(taskManager.findTask(id)); // метод findTask пришлось сделать публичным
+            }
         }
 
         // Должно быть равно новому состоянию

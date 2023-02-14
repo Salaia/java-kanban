@@ -18,7 +18,8 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
     static HttpTaskServer httpTaskServer;
 
     @BeforeEach
-        // Это жестоко по отношению к машине, но тесты требуют перезапуска :( Мне пришлось запускать блоками - мой ноут виснит где-то на 20-ом тесте
+        // Это жестоко по отношению к машине, но тесты требуют перезапуска.
+        // Мне пришлось запускать блоками - мой ноут виснет где-то на 20-ом тесте
     void startServers() throws IOException {
         kvServer = new KVServer();
         kvServer.start();
@@ -31,7 +32,7 @@ class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
 
     @AfterEach
     void stopServers() {
-        clearManager();
+        clearManager(); // Я починиль. Виноват был новый метод в InMemoryTaskManager - findTask(id)
         kvServer.stop();
         httpTaskServer.stop();
     }

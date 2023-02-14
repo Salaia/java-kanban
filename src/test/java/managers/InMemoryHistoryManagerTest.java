@@ -10,7 +10,7 @@ import tasks.Task;
 import java.util.HashSet;
 import java.util.Set;
 
-class InMemoryHistoryManagerTest extends HistoryManagerTest<InMemoryHistoryManager> {
+class InMemoryHistoryManagerTest extends HistoryManagerTest {
     static TaskManager taskManager;
 
     @BeforeEach

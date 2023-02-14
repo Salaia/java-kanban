@@ -12,8 +12,8 @@ public class EpicTask extends Task {
         subTasksIds = new ArrayList<>();
     }
 
-    public EpicTask(Long id, TaskTypes type, String name, Status status, String description) {
-        super(id, type, name, status, description);
+    public EpicTask(Long id, String name, Status status, String description) {
+        super(id, name, status, description);
         subTasksIds = new ArrayList<>();
     }
 
@@ -22,8 +22,8 @@ public class EpicTask extends Task {
         subTasksIds = new ArrayList<>();
     }
 
-    public EpicTask(Long id, TaskTypes type, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
-        super(id, type, name, status, description, startTime, duration);
+    public EpicTask(Long id, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
+        super(id, name, status, description, startTime, duration);
         subTasksIds = new ArrayList<>();
     }
 

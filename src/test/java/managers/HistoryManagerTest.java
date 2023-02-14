@@ -4,13 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Status;
 import tasks.Task;
-import tasks.TaskTypes;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-abstract class HistoryManagerTest<T extends HistoryManager> {
+abstract class HistoryManagerTest {
     protected HistoryManager historyManager;
 
     @BeforeEach
@@ -20,7 +19,7 @@ abstract class HistoryManagerTest<T extends HistoryManager> {
 
     @Test
     void add() {
-        Task simpleTaskId1 = new Task(1L, TaskTypes.TASK, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=1)");
+        Task simpleTaskId1 = new Task(1L, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=1)");
         historyManager.add(simpleTaskId1);
         final List<Task> history = historyManager.getHistory();
         assertNotNull(history, "История пустая.");
@@ -28,17 +27,16 @@ abstract class HistoryManagerTest<T extends HistoryManager> {
         Task taskFromHistory = history.get(0);
         assertEquals(simpleTaskId1, taskFromHistory, "Задачи не совпадают.");
         historyManager.add(simpleTaskId1);
-        final List<Task> doubledHistory = historyManager.getHistory();
         assertNotNull(history, "История пустая.");
         assertEquals(1, history.size(), "Неверный размер истории.");
     }
 
     @Test
     void remove() {
-        Task simpleTaskId1 = new Task(1L, TaskTypes.TASK, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=1)");
-        Task simpleTaskId2 = new Task(2L, TaskTypes.TASK, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=2)");
-        Task simpleTaskId3 = new Task(3L, TaskTypes.TASK, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=3)");
-        Task simpleTaskId4 = new Task(4L, TaskTypes.TASK, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=4)");
+        Task simpleTaskId1 = new Task(1L, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=1)");
+        Task simpleTaskId2 = new Task(2L, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=2)");
+        Task simpleTaskId3 = new Task(3L, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=3)");
+        Task simpleTaskId4 = new Task(4L, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=4)");
         historyManager.remove(0L);
         final List<Task> emptyHistory = historyManager.getHistory();
         assertEquals(0, emptyHistory.size(), "История не пустая.");
@@ -71,7 +69,7 @@ abstract class HistoryManagerTest<T extends HistoryManager> {
     @Test
     void getHistory() {
         assertEquals(0, historyManager.getHistory().size(), "История не пустая.");
-        Task simpleTaskId1 = new Task(1L, TaskTypes.TASK, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=1)");
+        Task simpleTaskId1 = new Task(1L, "SimpleTaskTest", Status.NEW, "SimpleTask(ID=1)");
         historyManager.add(simpleTaskId1);
         final List<Task> history = historyManager.getHistory();
         assertNotNull(history, "История пустая.");

@@ -28,14 +28,14 @@ public class Task {
 
     // Конструктор под восстановление из файла: все поля
     //         // id,type,name,status,description
-    public Task(Long id, TaskTypes type, String name, Status status, String description) {
+    public Task(Long id, String name, Status status, String description) {
         this.id = id;
         this.name = name;
         this.status = status;
         this.description = description;
     }
 
-    public Task(Long id, TaskTypes type, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
+    public Task(Long id, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -51,11 +51,8 @@ public class Task {
         this.id = id;
     }
 
-
     public LocalDateTime getEndTime() {
-        // start + duration
-        LocalDateTime finish = startTime.plus(duration);
-        return finish;
+        return startTime.plus(duration);
     }
 
     public Duration getDuration() {

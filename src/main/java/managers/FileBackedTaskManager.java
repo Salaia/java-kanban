@@ -4,7 +4,6 @@ import exceptions.ManagerSaveException;
 import tasks.*;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -18,10 +17,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     // Конструктор
     public FileBackedTaskManager(File file) {
         this.file = file;
-    }
-
-    public FileBackedTaskManager(URL url) {
-        Managers.getDefaultHttp();
     }
 
     @Override
@@ -170,26 +165,26 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             // id,type,name,status,description,startTime,duration,epic
             if (TaskTypes.valueOf(taskData[1]).equals(TaskTypes.SUBTASK)) {
                 if (!taskData[5].equals("null")) { // Если не пустая дата старта
-                    task = new SubTask(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
-                            Status.valueOf(taskData[3]), taskData[4], LocalDateTime.parse(taskData[5]), Duration.parse(taskData[6]), Long.parseLong(taskData[7]));
+                    task = new SubTask(Long.parseLong(taskData[0]), taskData[2], Status.valueOf(taskData[3]),
+                            taskData[4], LocalDateTime.parse(taskData[5]), Duration.parse(taskData[6]), Long.parseLong(taskData[7]));
                 } else {
-                    task = new SubTask(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
+                    task = new SubTask(Long.parseLong(taskData[0]), taskData[2],
                             Status.valueOf(taskData[3]), taskData[4], Long.parseLong(taskData[7]));
                 }
             } else if (TaskTypes.valueOf(taskData[1]).equals(TaskTypes.EPIC)) {
                 if (!taskData[5].equals("null")) { // Если не пустая дата старта
-                    task = new EpicTask(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
-                            Status.valueOf(taskData[3]), taskData[4], LocalDateTime.parse(taskData[5]), Duration.parse(taskData[6]));
+                    task = new EpicTask(Long.parseLong(taskData[0]), taskData[2], Status.valueOf(taskData[3]),
+                            taskData[4], LocalDateTime.parse(taskData[5]), Duration.parse(taskData[6]));
                 } else {
-                    task = new EpicTask(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
+                    task = new EpicTask(Long.parseLong(taskData[0]), taskData[2],
                             Status.valueOf(taskData[3]), taskData[4]);
                 }
             } else {
                 if (!taskData[5].equals("null")) { // Если не пустая дата старта
-                    task = new Task(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
+                    task = new Task(Long.parseLong(taskData[0]), taskData[2],
                             Status.valueOf(taskData[3]), taskData[4], LocalDateTime.parse(taskData[5]), Duration.parse(taskData[6]));
                 } else {
-                    task = new Task(Long.parseLong(taskData[0]), TaskTypes.valueOf(taskData[1]), taskData[2],
+                    task = new Task(Long.parseLong(taskData[0]), taskData[2],
                             Status.valueOf(taskData[3]), taskData[4]);
                 }
             }
@@ -201,19 +196,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private static String historyToString(HistoryManager manager) { // сохранить историю в строку
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (Task task : manager.getHistory()) {
-            result += task.getId() + ",";
+            result.append(task.getId()).append(",");
         }
-        return result;
+        return result.toString();
     }
 
     private static List<Long> historyFromString(String value) { // восстановить историю из строки
         List<Long> result = new ArrayList<>();
         String[] ids = value.split(",");
-        for (int i = 0; i < ids.length; i++) {
+        for (String id : ids) {
             try {
-                result.add(Long.parseLong(ids[i]));
+                result.add(Long.parseLong(id));
             } catch (NumberFormatException e) {
                 return result;
             }
@@ -224,7 +219,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     // будет восстанавливать данные менеджера из файла при запуске программы.
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        try (BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
+        try {
             String fileString = Files.readString(file.toPath()); //записали весь файл в 1 строку
             String[] fileLines = fileString.split("\n"); //разбили на массив построчно
 
@@ -260,15 +255,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             // вытаскиваем историю из последней строчки
             String historyLine = fileLines[fileLines.length - 1];
             List<Long> historyList = historyFromString(historyLine);
-            for (int i = 0; i < historyList.size(); i++) {
+            for (Long aLong : historyList) {
                 // дальше я проверяю, в какой мапе TaskManager есть ид по данному индексу в списке-истории
                 // после чего добавляю таску в историю HistoryManager
-                if (fileBackedTaskManager.simpleTasks.containsKey(historyList.get(i))) {
-                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.simpleTasks.get(historyList.get(i)));
-                } else if (fileBackedTaskManager.epicTasks.containsKey(historyList.get(i))) {
-                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.epicTasks.get(historyList.get(i)));
-                } else if (fileBackedTaskManager.subTasks.containsKey(historyList.get(i))) {
-                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.subTasks.get(historyList.get(i)));
+                if (fileBackedTaskManager.simpleTasks.containsKey(aLong)) {
+                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.simpleTasks.get(aLong));
+                } else if (fileBackedTaskManager.epicTasks.containsKey(aLong)) {
+                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.epicTasks.get(aLong));
+                } else if (fileBackedTaskManager.subTasks.containsKey(aLong)) {
+                    fileBackedTaskManager.getHistoryManager().add(fileBackedTaskManager.subTasks.get(aLong));
                 }
             }
 

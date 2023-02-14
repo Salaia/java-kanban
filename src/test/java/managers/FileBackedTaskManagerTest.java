@@ -72,8 +72,9 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @Test
     public void emptyCSVTesting() {
-        TaskManager fileBackedTaskManager = new FileBackedTaskManager(
-                new File("src/main/java/storage/TaskManagerSaved.csv"));
+        File file = new File("src/main/java/storage/TaskManagerSaved.csv");
+        TaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
+        // Этот блок я утащила из Интернета, чтобы очистить csv файл. Как это сделать более аккуратно - не знаю.
         try (BufferedWriter bf = Files.newBufferedWriter(Path.of("src/main/java/storage/TaskManagerSaved.csv"),
                 StandardOpenOption.TRUNCATE_EXISTING)) {
         } catch (IOException e) {

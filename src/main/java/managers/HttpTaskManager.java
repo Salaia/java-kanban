@@ -8,7 +8,6 @@ import tasks.SubTask;
 import tasks.Task;
 import tasks.TaskTypes;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +27,7 @@ public class HttpTaskManager extends FileBackedTaskManager {
     }
 
     public HttpTaskManager(int port, boolean load) {
-        super((File) null);
+        super(null);
         gson = Managers.getGson();
         client = new KVTaskClient("http://localhost:" + port + "/");
         if (load) { // восстановить ли состояние с сервера?

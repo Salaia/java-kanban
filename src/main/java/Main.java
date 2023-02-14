@@ -21,6 +21,9 @@ public class Main {
     static HttpClient client;
     static Gson gson;
 
+/*
+    Тут лежит предварительное тестирование из ТЗ, то есть код с платформы, пусть лежит как изначальный образец
+ */
 
     public static void main(String[] args) throws IOException, InterruptedException {
         new KVServer().start();

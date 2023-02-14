@@ -47,7 +47,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (head == null) {
             head = new Node(null, element, null);
             tail = head;
-        } else if (head != null && head.next == null) {
+        } else if (head.next == null) {
             tail = new Node(head, element, null);
             head.next = tail;
         } else {
@@ -90,14 +90,14 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail = node.prev;
             node.prev.next = null;
             history.remove(task.getId());
-        } else if (node.next != null) { // HEAD
-            node.next.prev = node.prev;
+        } else { // HEAD
+            node.next.prev = null;
             head = node.next;
             history.remove(task.getId());
         }
     } // removeNode
 
-    class Node {
+    static class Node {
         public Task data; // данные в узле
         public Node next;
         public Node prev;

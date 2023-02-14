@@ -1,6 +1,0 @@
-id,type,name,status,description,date_time,duration,epic
-1,TASK,First SimpleTask,NEW,SimpleTask(ID=1) without DateTime,null,null
-3,EPIC,First EpicTask,NEW,EpicTask(ID=3) with DateTime,2023-03-01T18:30,PT2H
-4,SUBTASK,First SubTask,NEW,SubTask(ID=4) of first EpicTask(ID=3) with DateTime,2023-03-01T18:30,PT2H,3
-
-1,3,4,
