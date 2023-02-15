@@ -1,56 +1,36 @@
 package http;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import managers.HttpTaskManager;
-import managers.Managers;
-import managers.TaskManager;
-import org.junit.jupiter.api.*;
-import tasks.*;
+import tasks.EpicTask;
+import tasks.SubTask;
+import tasks.Task;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+public class HttpTaskManagerTest {
+    protected HttpTaskManager taskManager;
+    protected static KVServer kvServer;
+    protected static HttpTaskServer httpTaskServer;
+    protected LocalDateTime testStartTime1;
+    protected LocalDateTime testStartTime1Plus15m;
+    protected Duration duration10H;
+    protected LocalDateTime testStartTime2;
+    protected LocalDateTime testStartTime2Plus15m;
+    protected Duration duration2H;
+    protected LocalDateTime testStartTime3;
+    protected LocalDateTime testStartTime3Minus15m;
+    protected Duration duration5H;
+    protected Long simpleTaskId1;
+    protected Long simpleTaskId2;
+    protected Long epicTaskId3;
+    protected Long subTaskId4;
+    protected Long subTaskId5;
+    protected Long epicTaskId6;
+    protected Long subTaskId7;
 
-/*
-Здесь только инициализация, сами тесты перенесла в два блока-наследника, иначе у моего компьютера памяти не хватает
- */
-
-class HttpTaskServerTest {
-    static KVServer kvServer;
-    static HttpTaskServer httpTaskServer;
-    static TaskManager taskManager;
-    static Gson gson;
-    static HttpClient client;
-    static LocalDateTime testStartTime1;
-    static LocalDateTime testStartTime1Plus15m;
-    static Duration duration10H;
-    static LocalDateTime testStartTime2;
-    static LocalDateTime testStartTime2Plus15m;
-    static Duration duration2H;
-    static LocalDateTime testStartTime3;
-    static LocalDateTime testStartTime3Minus15m;
-    static Duration duration5H;
-    static Long simpleTaskId1;
-    static Long simpleTaskId2;
-    static Long epicTaskId3;
-    static Long subTaskId4;
-    static Long subTaskId5;
-    static Long epicTaskId6;
-    static Long subTaskId7;
-
-    static void createTask() {
+    protected void createTask() {
         testStartTime1 = LocalDateTime.of(2023, Month.MARCH, 5, 14, 0, 0);
         testStartTime1Plus15m = testStartTime1.plusMinutes(15);
         duration10H = Duration.ofHours(10);
@@ -79,4 +59,8 @@ class HttpTaskServerTest {
                 new SubTask("Third SubTask", "SubTask(ID=7) of first EpicTask(ID=6) without DateTime", epicTaskId6));
     }
 
+    protected void clearManager() {
+        taskManager.deleteAllSimpleTasks();
+        taskManager.deleteAllEpicTasks();
+    }
 }

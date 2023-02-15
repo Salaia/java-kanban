@@ -12,29 +12,39 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/*
+    Протестировать этот блок целиком мой компьютер не может, но, разбитые на 6 частей - эти тесты проходят :)
+ */
+
 class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
 
     static KVServer kvServer;
     static HttpTaskServer httpTaskServer;
 
-    @BeforeEach
-        // Это жестоко по отношению к машине, но тесты требуют перезапуска.
-        // Мне пришлось запускать блоками - мой ноут виснет где-то на 20-ом тесте
-    void startServers() throws IOException {
+    @BeforeAll
+    static void startServers() throws IOException {
         kvServer = new KVServer();
         kvServer.start();
         httpTaskServer = new HttpTaskServer();
         httpTaskServer.start();
+    }
 
+    @AfterAll
+    static void stopServers() {
+        kvServer.stop();
+        httpTaskServer.stop();
+    }
+
+    @BeforeEach
+    void init() {
         taskManager = Managers.getDefaultHttp();
+        clearManager();
         createTask();
     }
 
     @AfterEach
-    void stopServers() {
-        clearManager(); // Я починиль. Виноват был новый метод в InMemoryTaskManager - findTask(id)
-        kvServer.stop();
-        httpTaskServer.stop();
+    void clear() {
+        clearManager();
     }
 
     @Test
