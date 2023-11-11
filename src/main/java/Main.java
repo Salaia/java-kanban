@@ -27,18 +27,18 @@ public class Main {
  */
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        System.out.println("Hello");
         new KVServer().start();
         new HttpTaskServer().start();
 
-        taskManager = new HttpTaskManager(8080);
+        taskManager = Managers.getDefault();
+        //taskManager = new HttpTaskManager(8080);
         client = HttpClient.newHttpClient();
         gson = Managers.getGson();
 
         // долго думала, куда запихнуть подсказки из ТЗ, место нашла только в предварительном тестировании
-        createSimpleTaskTest();
+        /*createSimpleTaskTest();
         getSimpleTaskByIdTest();
-        getAllTasksTest();
+        getAllTasksTest();*/
 
     }
 

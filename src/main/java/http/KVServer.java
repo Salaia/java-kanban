@@ -98,7 +98,7 @@ public class KVServer {
     }
 
     public void start() {
-        System.out.println("Запускаем сервер на порту " + PORT);
+        System.out.println("Starting KV-server on port: " + PORT);
         server.start();
     }
 
