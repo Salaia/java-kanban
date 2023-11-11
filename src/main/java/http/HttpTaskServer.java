@@ -44,6 +44,7 @@ public class HttpTaskServer {
     private void handler(HttpExchange exchange) {
         try {
             final String path = exchange.getRequestURI().getPath().substring(7); // beginIndex 7
+            // http://localhost:8080/tasks/
             switch (path) {
                 case "": {
                     if (!exchange.getRequestMethod().equals("GET")) {
@@ -69,7 +70,7 @@ public class HttpTaskServer {
                     handleSubtask(exchange);
                     break;
                 }
-                case "subtask/epic": {
+                case "subtask/epic": { // получить все сабтаски одного эпика
                     if (!exchange.getRequestMethod().equals("GET")) {
                         exchange.sendResponseHeaders(405, 0);
                     }

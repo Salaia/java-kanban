@@ -342,6 +342,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         epicTask.setId(generateId());
         epicTask.setStatus(Status.NEW);
+        epicTask.setSubTasksIds(new ArrayList<>());
 
         epicTasks.put(epicTask.getId(), epicTask);
         priorityTailIds.add(epicTask.getId());
