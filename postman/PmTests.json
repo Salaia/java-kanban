@@ -1,0 +1,238 @@
+{
+	"info": {
+		"_postman_id": "be84f892-d029-4e62-a6a5-48f405fc1a30",
+		"name": "Kanban",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29756715"
+	},
+	"item": [
+		{
+			"name": "Post task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 or 201\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,201]);",
+							"});",
+							"pm.test(\"Has json body\", function () {",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"pm.test(\"Test 'id' field is 1\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('id');",
+							"    pm.expect(jsonData.id, '\"id\" must be 1').to.eql(1);",
+							"});",
+							"pm.test(\"Test 'name' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('name');",
+							"    pm.expect(jsonData.name, '\"name\" must be \"Simple task\"').to.eql('Simple task');",
+							"});",
+							"pm.test(\"Test 'description' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('description');",
+							"    pm.expect(jsonData.description, '\"description\" field must be \"task description\"').to.eql('task description');    ",
+							"});",
+							"pm.test(\"Test 'status' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('status');",
+							"    pm.expect(jsonData.status, '\"status\" field must be \"NEW\"').to.eql('NEW');    ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Simple task\",\n  \"description\": \"task description\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/tasks/task",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post epic task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 or 201\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,201]);",
+							"});",
+							"pm.test(\"Has json body\", function () {",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"pm.test(\"Test 'id' field is 2\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('id');",
+							"    pm.expect(jsonData.id, '\"id\" must be 2').to.eql(2);",
+							"});",
+							"pm.test(\"Test 'name' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('name');",
+							"    pm.expect(jsonData.name, '\"name\" must be \"Epic task\"').to.eql('Epic task');",
+							"});",
+							"pm.test(\"Test 'description' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('description');",
+							"    pm.expect(jsonData.description, '\"description\" field must be \"Epic task description\"').to.eql('Epic task description');    ",
+							"});",
+							"pm.test(\"Test 'status' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('status');",
+							"    pm.expect(jsonData.status, '\"status\" field must be \"NEW\"').to.eql('NEW');    ",
+							"});",
+							"pm.test(\"Test 'subTasksIds' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('subTasksIds');",
+							"    pm.expect(jsonData.subTasksIds.length, '\"subTasksIds\" field must be have 0 subtasks').to.eql(0);    ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Epic task\",\n  \"description\": \"Epic task description\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/tasks/epic",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"epic"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post subtask",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 or 201\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,201]);",
+							"});",
+							"pm.test(\"Has json body\", function () {",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"pm.test(\"Test 'epicId' field is 2\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('epicId');",
+							"    pm.expect(jsonData.epicId, '\"epicId\" must be 2').to.eql(2);",
+							"});",
+							"pm.test(\"Test 'id' field is 3\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('id');",
+							"    pm.expect(jsonData.id, '\"id\" must be 3').to.eql(3);",
+							"});",
+							"pm.test(\"Test 'name' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('name');",
+							"    pm.expect(jsonData.name, '\"name\" must be \"Subtask\"').to.eql('Subtask');",
+							"});",
+							"pm.test(\"Test 'description' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('description');",
+							"    pm.expect(jsonData.description, '\"description\" field must be \"Subtask (id 3) of epic task (id 2)\"').to.eql('Subtask (id 3) of epic task (id 2)');    ",
+							"});",
+							"pm.test(\"Test 'status' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('status');",
+							"    pm.expect(jsonData.status, '\"status\" field must be \"NEW\"').to.eql('NEW');    ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Subtask\",\n  \"description\": \"Subtask (id 3) of epic task (id 2)\",\n  \"epicId\" : \"2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/tasks/subtask",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"subtask"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Prioritized Tasks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/tasks/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
