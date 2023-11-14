@@ -65,13 +65,26 @@
 1) Склонируйте репозиторий и перейдите в него
    git@github.com:Salaia/java-kanban.git
 
-2) Запустите проект в выбранной IDE
+2) Запустите проект в выбранной IDE: src/main/java/Main.java
 
-3) Перейдите по адресу
+3) Проект работает по адресу:
 
 http://localhost:8080/tasks
 
-4) Можно работать с проектом
+### API
+
+Примеры использования программы можно увидеть в приложенных Postman тестах: postman/PmTests.json
+
+http://localhost:8080/tasks/task - POST - создать задачу
+http://localhost:8080/tasks/epic - POST - создать задачу-эпик
+http://localhost:8080/tasks/subtask - POST - создать подзадачу (к созданному ранее эпику)
+
+http://localhost:8080/tasks - GET - получить список задач по приоритету
+
+### Testing
+
+Unit-тесты: src/test/java
+Postman-тесты: postman/PmTests.json
 
 ### Статус и планы по доработке проекта 
 
