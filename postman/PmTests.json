@@ -73,6 +73,72 @@
 			"response": []
 		},
 		{
+			"name": "Update task id1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 or 201\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,201]);",
+							"});",
+							"pm.test(\"Has json body\", function () {",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"pm.test(\"Test 'id' field is 1\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('id');",
+							"    pm.expect(jsonData.id, '\"id\" must be 1').to.eql(1);",
+							"});",
+							"pm.test(\"Test 'name' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('name');",
+							"    pm.expect(jsonData.name, '\"name\" must be \"Simple task UPDATED\"').to.eql('Simple task UPDATED');",
+							"});",
+							"pm.test(\"Test 'description' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('description');",
+							"    pm.expect(jsonData.description, '\"description\" field must be \"UPDATED task description\"').to.eql('UPDATED task description');    ",
+							"});",
+							"pm.test(\"Test 'status' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('status');",
+							"    pm.expect(jsonData.status, '\"status\" field must be \"UPDATED\"').to.eql('UPDATED');    ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Simple task UPDATED\",\n  \"id\": 1,\n  \"description\": \"UPDATED task description\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/tasks/task",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Post epic task",
 			"event": [
 				{
@@ -215,6 +281,90 @@
 			"response": []
 		},
 		{
+			"name": "Get all simple tasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 or 201\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,201]);",
+							"});",
+							"pm.test(\"Has json body\", function () {",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"pm.test(\"Test 'id' field is 1\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('id');",
+							"    pm.expect(jsonData.id, '\"id\" must be 1').to.eql(1);",
+							"});",
+							"pm.test(\"Test 'name' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('name');",
+							"    pm.expect(jsonData.name, '\"name\" must be \"Simple task\"').to.eql('Simple task');",
+							"});",
+							"pm.test(\"Test 'description' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('description');",
+							"    pm.expect(jsonData.description, '\"description\" field must be \"task description\"').to.eql('task description');    ",
+							"});",
+							"pm.test(\"Test 'status' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('status');",
+							"    pm.expect(jsonData.status, '\"status\" field must be \"NEW\"').to.eql('NEW');    ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/tasks/task",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get get  all SubTasks of epic",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/tasks/subtask/epic?id=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"subtask",
+						"epic"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Prioritized Tasks",
 			"request": {
 				"method": "GET",
@@ -229,6 +379,160 @@
 					"path": [
 						"tasks",
 						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get history",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/tasks/history",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"history"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete ALL simple tasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/tasks/task",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 or 201\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200,201]);",
+							"});",
+							"pm.test(\"Has json body\", function () {",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"pm.test(\"Test 'id' field is 1\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('id');",
+							"    pm.expect(jsonData.id, '\"id\" must be 1').to.eql(1);",
+							"});",
+							"pm.test(\"Test 'name' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('name');",
+							"    pm.expect(jsonData.name, '\"name\" must be \"Simple task\"').to.eql('Simple task');",
+							"});",
+							"pm.test(\"Test 'description' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('description');",
+							"    pm.expect(jsonData.description, '\"description\" field must be \"task description\"').to.eql('task description');    ",
+							"});",
+							"pm.test(\"Test 'status' field\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('status');",
+							"    pm.expect(jsonData.status, '\"status\" field must be \"NEW\"').to.eql('NEW');    ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Simple task\",\n  \"description\": \"task description\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/tasks/task",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete simple task by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/tasks/task?id=4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tasks",
+						"task"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "4"
+						}
 					]
 				}
 			},

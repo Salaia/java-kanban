@@ -80,6 +80,7 @@ http://localhost:8080/tasks/epic - POST - создать задачу-эпик
 http://localhost:8080/tasks/subtask - POST - создать подзадачу (к созданному ранее эпику)
 
 http://localhost:8080/tasks - GET - получить список задач по приоритету
+http://localhost:8080/tasks/history - GET - получить историю обращений к задачам
 
 ### Testing
 
