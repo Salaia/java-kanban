@@ -79,8 +79,15 @@ http://localhost:8080/tasks/task - POST - создать/обновить зад
 http://localhost:8080/tasks/epic - POST - создать/обновить задачу-эпик
 http://localhost:8080/tasks/subtask - POST - создать/обновить подзадачу (к созданному ранее эпику)
 
+http://localhost:8080/tasks/subtask/epic?id= - GET - получить все подзадачи эпика по его id
+http://localhost:8080/tasks/epic?id= - GET - получить эпик по его id
+
+http://localhost:8080/tasks/task - GET - получить список всех простых задач
 http://localhost:8080/tasks - GET - получить список задач по приоритету
 http://localhost:8080/tasks/history - GET - получить историю обращений к задачам
+
+http://localhost:8080/tasks/task - DELETE - удаление всех простых задач
+http://localhost:8080/tasks/task?id= - DELETE - удаление простой задачи по ее id
 
 ### Testing
 
