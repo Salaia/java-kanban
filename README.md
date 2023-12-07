@@ -99,8 +99,8 @@ http://localhost:8080/tasks
 
 ### Testing
 
-Unit-тесты: src/test/java
-Postman-тесты: postman/PmTests.json
+* Unit-тесты: src/test/java
+* Postman-тесты: postman/PmTests.json
 
 ### Статус и планы по доработке проекта 
 
