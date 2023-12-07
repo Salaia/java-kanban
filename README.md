@@ -75,9 +75,9 @@ http://localhost:8080/tasks
 
 Примеры использования программы можно увидеть в приложенных Postman тестах: postman/PmTests.json
 
-http://localhost:8080/tasks/task - POST - создать задачу
-http://localhost:8080/tasks/epic - POST - создать задачу-эпик
-http://localhost:8080/tasks/subtask - POST - создать подзадачу (к созданному ранее эпику)
+http://localhost:8080/tasks/task - POST - создать/обновить задачу
+http://localhost:8080/tasks/epic - POST - создать/обновить задачу-эпик
+http://localhost:8080/tasks/subtask - POST - создать/обновить подзадачу (к созданному ранее эпику)
 
 http://localhost:8080/tasks - GET - получить список задач по приоритету
 http://localhost:8080/tasks/history - GET - получить историю обращений к задачам

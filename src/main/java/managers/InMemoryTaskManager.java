@@ -434,7 +434,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (getHistory().contains(oldEpic)) {
             historyManager.updateHistory(epicTask);
         }
-
+        epicTasks.replace(oldEpic.getId(), oldEpic);
     } // updateEpicTask
 
     @Override

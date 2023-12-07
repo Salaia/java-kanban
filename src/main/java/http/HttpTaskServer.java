@@ -136,12 +136,11 @@ public class HttpTaskServer {
                 final Long id = task.getId();
                 if (id != null) {
                     taskManager.updateSimpleTask(task);
-                    final String response = gson.toJson(task);
+                    final String response = gson.toJson(taskManager.getSimpleTaskByIdOrNull(task.getId()));
                     sendText(exchange, response);
                 } else {
                     Long taskId = taskManager.recordSimpleTask(task);
-                    task.setId(taskId);
-                    final String response = gson.toJson(task);
+                    final String response = gson.toJson(taskManager.getSimpleTaskByIdOrNull(taskId));
                     sendText(exchange, response);
                 }
                 break;
@@ -189,12 +188,11 @@ public class HttpTaskServer {
                 final Long id = subTask.getId();
                 if (id != null) {
                     taskManager.updateSubTask(subTask);
-                    final String response = gson.toJson(subTask);
+                    final String response = gson.toJson(taskManager.getSubTaskByIdOrNull(subTask.getId()));
                     sendText(exchange, response);
                 } else {
                     Long subId = taskManager.recordSubTask(subTask);
-                    subTask.setId(subId);
-                    final String response = gson.toJson(subTask);
+                    final String response = gson.toJson(taskManager.getSubTaskByIdOrNull(subId));
                     sendText(exchange, response);
                 }
                 break;
@@ -242,12 +240,12 @@ public class HttpTaskServer {
                 final Long id = epicTask.getId();
                 if (id != null) {
                     taskManager.updateEpicTask(epicTask);
-                    final String response = gson.toJson(epicTask);
+                    final String response = gson.toJson(taskManager.getEpicTaskByIdOrNull(epicTask.getId()));
                     sendText(exchange, response);
                 } else {
                     Long epicId = taskManager.recordEpicTask(epicTask);
                     epicTask.setId(epicId);
-                    final String response = gson.toJson(epicTask);
+                    final String response = gson.toJson(taskManager.getEpicTaskByIdOrNull(epicId));
                     sendText(exchange, response);
                 }
                 break;
