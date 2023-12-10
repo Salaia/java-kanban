@@ -43,8 +43,7 @@ public class HttpTaskServer {
 
     private void handler(HttpExchange exchange) {
         try {
-            final String path = exchange.getRequestURI().getPath().substring(7); // beginIndex 7
-            // http://localhost:8080/tasks/
+            final String path = exchange.getRequestURI().getPath().substring(7);
             switch (path) {
                 case "": {
                     if (!exchange.getRequestMethod().equals("GET")) {
@@ -70,12 +69,12 @@ public class HttpTaskServer {
                     handleSubtask(exchange);
                     break;
                 }
-                case "subtask/epic": { // получить все сабтаски одного эпика
+                case "subtask/epic": {
                     if (!exchange.getRequestMethod().equals("GET")) {
                         exchange.sendResponseHeaders(405, 0);
                     }
                     final String query = exchange.getRequestURI().getQuery();
-                    String idParam = query.substring(3); //?id=
+                    String idParam = query.substring(3);
                     final Long id = Long.parseLong(idParam);
                     final List<SubTask> subtasks = taskManager.getAllSubTasksOfEpicOrNull(id);
                     final String response = gson.toJson(subtasks);
@@ -147,7 +146,7 @@ public class HttpTaskServer {
             }
         }
         exchange.close();
-    } // handleTask(HttpExchange exchange)
+    }
 
     private void handleSubtask(HttpExchange exchange) throws IOException {
         final String query = exchange.getRequestURI().getQuery();
@@ -196,10 +195,10 @@ public class HttpTaskServer {
                     sendText(exchange, response);
                 }
                 break;
-            } // case "POST"
-        } // switch
+            }
+        }
         exchange.close();
-    } // handleSubtask(HttpExchange exchange)
+    }
 
     private void handleEpic(HttpExchange exchange) throws IOException {
         final String query = exchange.getRequestURI().getQuery();
@@ -249,12 +248,11 @@ public class HttpTaskServer {
                     sendText(exchange, response);
                 }
                 break;
-            } // case "POST"
-        } // switch
+            }
+        }
         exchange.close();
-    } // handleEpic(HttpExchange exchange)
+    }
 
-    // KVServer method
     public void start() {
         System.out.println("Starting Http-Task-Server on port: " + PORT);
         server.start();

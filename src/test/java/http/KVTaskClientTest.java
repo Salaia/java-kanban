@@ -174,7 +174,7 @@ class KVTaskClientTest {
         List<Task> historyTasks = new ArrayList<>();
         for (Long id : historyIds) {
             if ((taskManager.findTask(id)) != null) {
-                historyTasks.add(taskManager.findTask(id)); // метод findTask пришлось сделать публичным
+                historyTasks.add(taskManager.findTask(id));
             }
         }
 
