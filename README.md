@@ -52,10 +52,15 @@
 
 ### 🛠 Tech & Tools 
 
-* Java 11
-* JUnit 5
-* Gson
-* Альтернативные методы хранения
+<div>
+      <img src="https://github.com/Salaia/icons/blob/main/green/Java.png?raw=true" title="Java" alt="Java" height="40"/>
+      <img src="https://github.com/Salaia/icons/blob/main/green/Gson.png?raw=true" title="Gson" alt="Gson" height="40"/>
+      <img src="https://github.com/Salaia/icons/blob/main/green/JUnit%205.png?raw=true" title="JUnit 5" alt="JUnit 5" height="40"/>
+      <img src="https://github.com/Salaia/icons/blob/main/green/CSV.png?raw=true" title="*.csv" alt="csv" height="40"/>
+      <img src="https://github.com/Salaia/icons/blob/main/green/KVServer.png?raw=true" title="Key-Value server" alt="key value server" height="40"/>
+</div>
+
+* Альтернативные методы хранения:
    * в файле формата *.csv
    * хранение на Key-Value server через связку HttpServer, KV-Server + KV-Client.
 * История обращений сохраняется в самодельном LinkedList 
